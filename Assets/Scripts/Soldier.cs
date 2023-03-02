@@ -6,18 +6,24 @@ public class Soldier : MonoBehaviour
     private Animator _soldierAnimator;
     private const string IS_WALKING_ANIMATION_NAME = "IsWalking";
 
-    private void Start()
+    private void Awake()
     {
         this._soldierAnimator = GetComponentInChildren<Animator>();
     }
-    
+
+    private void Start()
+    {
+        SetTargetPosition(transform.position);
+    }
+
     private void Update()
     {
-        if (Input.GetMouseButtonDown((int) Constants.MouseButtonIds.LeftClick))
-        {
-            this._targetPosition = GlobalMouse.GetFloorPosition();
-        }
         HandleMove();
+    }
+
+    public void SetTargetPosition(Vector3 targetPosition)
+    {
+        this._targetPosition = targetPosition;
     }
 
     private void HandleMove()
