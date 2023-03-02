@@ -30,7 +30,9 @@ public class Soldier : MonoBehaviour
 
         _soldierAnimator.SetBool(IS_WALKING_ANIMATION_NAME, true);
         float moveSpeed = 4f;
+        float rotateSpeed = 10f;
         Vector3 moveDirection = (_targetPosition - transform.position).normalized;
+        transform.forward = Vector3.Lerp(transform.forward, moveDirection, Time.deltaTime * rotateSpeed);
         transform.position += moveDirection * moveSpeed * Time.deltaTime;
     }
 }
