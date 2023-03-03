@@ -4,7 +4,6 @@ public class Soldier : MonoBehaviour
 {
     private Vector3 _targetPosition;
     private Animator _soldierAnimator;
-    private GridPosition _gridPosition;
     private const string IS_WALKING_ANIMATION_NAME = "IsWalking";
 
     private void Awake()
@@ -14,15 +13,13 @@ public class Soldier : MonoBehaviour
 
     private void Start()
     {
-        this._gridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
-        LevelGrid.Instance.SetSoldierAtGridPosition(this._gridPosition, this);
+        LevelGrid.Instance.OnSoldierSpawn(this);
         SetTargetPosition(transform.position);
     }
 
     private void Update()
     {
         HandleMove();
-        HandleGridPosition();
     }
 
     public void SetTargetPosition(Vector3 targetPosition)
@@ -44,20 +41,5 @@ public class Soldier : MonoBehaviour
         Vector3 moveDirection = (_targetPosition - transform.position).normalized;
         transform.forward = Vector3.Lerp(transform.forward, moveDirection, Time.deltaTime * rotateSpeed);
         transform.position += moveDirection * moveSpeed * Time.deltaTime;
-    }
-
-    private void HandleGridPosition()
-    {
-        GridPosition currentGridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
-        Soldier soldierAtGridPosition = LevelGrid.Instance.GetSoldierAtGridPosition(currentGridPosition);
-        if (this._gridPosition != currentGridPosition || this != soldierAtGridPosition)
-        {
-            LevelGrid.Instance.OnSoldierMovedGridPosition(this, this._gridPosition, currentGridPosition);
-        }
-    }
-
-    public void SetGridPosition(GridPosition gridPosition)
-    {
-        this._gridPosition = gridPosition;
     }
 }

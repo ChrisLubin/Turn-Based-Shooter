@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class LevelGrid : MonoBehaviour
@@ -8,6 +9,8 @@ public class LevelGrid : MonoBehaviour
     {
         get; private set;
     }
+    private List<Soldier> _soldiers = new List<Soldier>();
+    private IDictionary<Soldier, GridPosition> _soldierToGridPositionMap = new Dictionary<Soldier, GridPosition>();
 
     private void Awake()
     {
@@ -26,30 +29,49 @@ public class LevelGrid : MonoBehaviour
         this._gridController.CreateDebugObjects(this.transform, _gridDebugObjectPrefab);
     }
 
-    public Soldier GetSoldierAtGridPosition(GridPosition gridPosition)
+    private void Update()
     {
-        GridObject gridObject = this._gridController.GetGridObject(gridPosition);
-        return gridObject.GetSoldier();
+        foreach (Soldier soldier in this._soldiers)
+        {
+            bool successfullyGotFrom = this._soldierToGridPositionMap.TryGetValue(soldier, out GridPosition from);
+            GridPosition to = GetGridPosition(soldier.transform.position);
+            if (successfullyGotFrom && from != to)
+            {
+                ClearSoldierAtGridPosition(from);
+                SetSoldierAtGridPosition(to, soldier);
+
+                foreach (Soldier innerSoldier in this._soldiers)
+                {
+                    bool anotherSoldierLeftMyGridPosition = GetGridPosition(innerSoldier.transform.position) == from;
+                    if (anotherSoldierLeftMyGridPosition)
+                    {
+                        SetSoldierAtGridPosition(from, innerSoldier);
+                        break;
+                    }
+                }
+            }
+        }
     }
 
-    public void SetSoldierAtGridPosition(GridPosition gridPosition, Soldier soldier)
+    private void SetSoldierAtGridPosition(GridPosition gridPosition, Soldier soldier)
     {
         GridObject gridObject = this._gridController.GetGridObject(gridPosition);
         gridObject.SetSoldier(soldier);
+        this._soldierToGridPositionMap[soldier] = gridPosition;
     }
 
-    public void ClearSoldierAtGridPosition(GridPosition gridPosition)
+    private void ClearSoldierAtGridPosition(GridPosition gridPosition)
     {
         GridObject gridObject = this._gridController.GetGridObject(gridPosition);
         gridObject.RemoveSoldier();
     }
 
-    public GridPosition GetGridPosition(Vector3 worldPosition) => this._gridController.GetGridPosition(worldPosition);
+    private GridPosition GetGridPosition(Vector3 worldPosition) => this._gridController.GetGridPosition(worldPosition);
 
-    public void OnSoldierMovedGridPosition(Soldier soldier, GridPosition from, GridPosition to)
+    public void OnSoldierSpawn(Soldier soldier)
     {
-        ClearSoldierAtGridPosition(from);
-        SetSoldierAtGridPosition(to, soldier);
-        soldier.SetGridPosition(to);
+        this._soldiers.Add(soldier);
+        this._soldierToGridPositionMap.Add(soldier, GetGridPosition(soldier.transform.position));
+        SetSoldierAtGridPosition(GetGridPosition(soldier.transform.position), soldier);
     }
 }
