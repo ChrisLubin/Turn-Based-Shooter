@@ -13,7 +13,6 @@ public class Soldier : MonoBehaviour
 
     private void Start()
     {
-        LevelGrid.Instance.OnSoldierSpawn(this);
         SetTargetPosition(transform.position);
     }
 

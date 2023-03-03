@@ -9,7 +9,7 @@ public class LevelGrid : MonoBehaviour
     {
         get; private set;
     }
-    private List<Soldier> _soldiers = new List<Soldier>();
+    private Soldier[] _soldiers;
     private IDictionary<Soldier, GridPosition> _soldierToGridPositionMap = new Dictionary<Soldier, GridPosition>();
 
     private void Awake()
@@ -27,6 +27,11 @@ public class LevelGrid : MonoBehaviour
     private void Start()
     {
         this._gridController.CreateDebugObjects(this.transform, _gridDebugObjectPrefab);
+        this._soldiers = GameObject.FindObjectsOfType<Soldier>();
+        foreach (Soldier soldier in this._soldiers)
+        {
+            OnSoldierSpawn(soldier);
+        }
     }
 
     private void Update()
@@ -70,7 +75,6 @@ public class LevelGrid : MonoBehaviour
 
     public void OnSoldierSpawn(Soldier soldier)
     {
-        this._soldiers.Add(soldier);
         this._soldierToGridPositionMap.Add(soldier, GetGridPosition(soldier.transform.position));
         SetSoldierAtGridPosition(GetGridPosition(soldier.transform.position), soldier);
     }
