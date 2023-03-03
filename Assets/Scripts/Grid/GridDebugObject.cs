@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
@@ -13,9 +11,13 @@ public class GridDebugObject : MonoBehaviour
         this._textMeshPro = GetComponentInChildren<TextMeshPro>();
     }
 
+    private void Update()
+    {
+        this._textMeshPro.text = this._gridObject.ToString();
+    }
+
     public void SetGridObject(GridObject gridObject)
     {
         this._gridObject = gridObject;
-        this._textMeshPro.text = gridObject.ToString();
     }
 }
