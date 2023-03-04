@@ -21,12 +21,17 @@ public class SoldiersActionController : MonoBehaviour
         Instance = this;
     }
 
-    private void Update()
+    private void Start()
     {
-        if (Input.GetMouseButtonDown((int)Constants.MouseButtonIds.LeftClick))
+        GlobalMouse.Instance.OnLayerLeftClick += this.OnLayerLeftClick;
+    }
+
+    private void OnLayerLeftClick(int layerMaskId, GameObject gameObject)
+    {
+        if (layerMaskId == (int)Constants.LayerMaskIds.Soldier)
         {
-            bool clickedSoldier = GlobalMouse.TryGetIntersectingComponent<Soldier>((int)Constants.LayerMaskIds.Soldier, out Soldier soldier);
-            if (clickedSoldier)
+            bool gotSoldier = gameObject.TryGetComponent<Soldier>(out Soldier soldier);
+            if (gotSoldier)
             {
                 HandleSoldierSelection(soldier);
             }

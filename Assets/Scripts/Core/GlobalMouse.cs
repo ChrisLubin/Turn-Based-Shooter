@@ -1,29 +1,40 @@
+using System;
 using UnityEngine;
 
 public class GlobalMouse : MonoBehaviour
 {
-    public static bool TryGetIntersectingComponent<T>(int layerMaskId, out T component)
-    {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        bool didClickComponent = Physics.Raycast(ray, out RaycastHit raycastHit, float.MaxValue, layerMaskId);
+    public static GlobalMouse Instance;
+    private readonly int _LEFT_CLICK_ID = 0;
+    private readonly int _RIGHT_CLICK_ID = 1;
+    public event Action<int, GameObject> OnLayerLeftClick;
 
-        if (didClickComponent && raycastHit.transform.TryGetComponent<T>(out T retrievedComponent))
+    private void Awake()
+    {
+        if (Instance != null)
         {
-            component = retrievedComponent;
-            return true;
+            Debug.LogError("There's more than one GlobalMouse! " + transform + " - " + Instance);
+            Destroy(gameObject);
+            return;
         }
-
-        component = default(T);
-        return false;
+        Instance = this;
     }
 
-    public static bool IsIntersecting(int layerMaskId)
+    private void Update()
     {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        return Physics.Raycast(ray, out RaycastHit _, float.MaxValue, layerMaskId);
+        if (Input.GetMouseButtonDown(this._LEFT_CLICK_ID))
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            Physics.Raycast(ray, out RaycastHit raycastHit, float.MaxValue);
+            GameObject gameObject = raycastHit.collider.gameObject;
+            int layerMaskId = gameObject.layer;
+            if (layerMaskId != (int)Constants.LayerMaskIds.Default && layerMaskId != (int)Constants.LayerMaskIds.IgnoreRaycast)
+            {
+                this.OnLayerLeftClick?.Invoke(1 << layerMaskId, gameObject);
+            }
+        }
     }
 
-    public static Vector3 GetFloorPosition()
+    public Vector3 GetFloorPosition()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         Physics.Raycast(ray, out RaycastHit raycastHit, float.MaxValue, (int)Constants.LayerMaskIds.MainFloor);

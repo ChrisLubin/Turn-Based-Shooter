@@ -26,6 +26,7 @@ public class LevelGrid : MonoBehaviour
 
     private void Start()
     {
+        GlobalMouse.Instance.OnLayerLeftClick += this.OnLayerLeftClick;
         this._gridController.CreateDebugObjects(this.transform, _gridDebugObjectPrefab);
         this._soldiers = GameObject.FindObjectsOfType<Soldier>();
         foreach (Soldier soldier in this._soldiers)
@@ -56,16 +57,15 @@ public class LevelGrid : MonoBehaviour
                 }
             }
         }
+    }
 
-        if (Input.GetMouseButtonDown((int)Constants.MouseButtonIds.LeftClick))
+    private void OnLayerLeftClick(int layerMaskId, GameObject gameObject)
+    {
+        if (layerMaskId == (int)Constants.LayerMaskIds.MainFloor)
         {
-            bool didClickFloor = GlobalMouse.IsIntersecting((int)Constants.LayerMaskIds.MainFloor);
-            if (didClickFloor)
-            {
-                GridPosition gridPosition = this._gridController.GetGridPosition(GlobalMouse.GetFloorPosition());
-                Vector3 middleOfGridPosition = this._gridController.GetWorldPosition(gridPosition);
-                SoldiersActionController.Instance.MoveSelectedSoldierToPosition(middleOfGridPosition);
-            }
+            GridPosition gridPosition = this._gridController.GetGridPosition(GlobalMouse.Instance.GetFloorPosition());
+            Vector3 middleOfGridPosition = this._gridController.GetWorldPosition(gridPosition);
+            SoldiersActionController.Instance.MoveSelectedSoldierToPosition(middleOfGridPosition);
         }
     }
 
