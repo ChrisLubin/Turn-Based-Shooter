@@ -56,6 +56,17 @@ public class LevelGrid : MonoBehaviour
                 }
             }
         }
+
+        if (Input.GetMouseButtonDown((int) Constants.MouseButtonIds.LeftClick))
+        {
+            bool didClickFloor = GlobalMouse.IsIntersecting((int) Constants.LayerMaskIds.MainFloor);
+            if (didClickFloor)
+            {
+                GridPosition gridPosition = this._gridController.GetGridPosition(GlobalMouse.GetFloorPosition());
+                Vector3 middleOfGridPosition = this._gridController.GetWorldPosition(gridPosition);
+                SoldiersActionController.Instance.MoveSelectedSoldierToPosition(middleOfGridPosition);
+            }
+        }
     }
 
     private void SetSoldierAtGridPosition(GridPosition gridPosition, Soldier soldier)

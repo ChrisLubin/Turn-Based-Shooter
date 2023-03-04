@@ -23,24 +23,19 @@ public class SoldiersActionController : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown((int) Constants.MouseButtonIds.LeftClick)) 
+        if (Input.GetMouseButtonDown((int)Constants.MouseButtonIds.LeftClick))
         {
-            bool clickedSoldier = GlobalMouse.TryGetIntersectingComponent<Soldier>((int) Constants.LayerMaskIds.Soldier, out Soldier soldier);
-            bool clickedFloor = GlobalMouse.IsIntersecting((int) Constants.LayerMaskIds.MainFloor);
+            bool clickedSoldier = GlobalMouse.TryGetIntersectingComponent<Soldier>((int)Constants.LayerMaskIds.Soldier, out Soldier soldier);
             if (clickedSoldier)
             {
                 HandleSoldierSelection(soldier);
             }
-            else if (clickedFloor)
-            {
-                HandleFloorClicked();
-            }
         }
     }
 
-    private void HandleFloorClicked()
+    public void MoveSelectedSoldierToPosition(Vector3 to)
     {
-        _selectedSoldier.SetTargetPosition(GlobalMouse.GetFloorPosition());
+        this._selectedSoldier.SetTargetPosition(to);
     }
 
     private void HandleSoldierSelection(Soldier soldier)
