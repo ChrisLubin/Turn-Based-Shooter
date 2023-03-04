@@ -5,6 +5,7 @@ public static class Constants
         MainFloor = 1 << 7,
         Soldier = 1 << 8,
     }
+
     public enum MouseButtonIds : int
     {
         LeftClick = 0,

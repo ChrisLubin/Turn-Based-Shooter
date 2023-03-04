@@ -16,12 +16,12 @@ public struct GridPosition : IEquatable<GridPosition>
         return $"({this.x}, {this.z})";
     }
 
-    public static bool operator == (GridPosition a, GridPosition b)
+    public static bool operator ==(GridPosition a, GridPosition b)
     {
         return a.x == b.x && a.z == b.z;
     }
 
-    public static bool operator != (GridPosition a, GridPosition b)
+    public static bool operator !=(GridPosition a, GridPosition b)
     {
         return a.x != b.x || a.z != b.z;
     }

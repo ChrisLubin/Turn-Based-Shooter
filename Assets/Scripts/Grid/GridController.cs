@@ -18,8 +18,8 @@ public class GridController
         {
             for (int z = 0; z < height; z++)
             {
-                GridPosition gridPosition = new GridPosition(x, z);
-                _gridObjectsMatrix[x, z] = new GridObject(this, gridPosition);
+                GridPosition gridPosition = new(x, z);
+                _gridObjectsMatrix[x, z] = new GridObject(gridPosition);
             }
         }
     }
@@ -40,7 +40,7 @@ public class GridController
         {
             for (int z = 0; z < _height; z++)
             {
-                GridPosition gridPosition = new GridPosition(x, z);
+                GridPosition gridPosition = new(x, z);
                 Transform debugTransform = GameObject.Instantiate(debugPrefab, GetWorldPosition(gridPosition), Quaternion.identity, parentTransform);
                 GridDebugObject gridDebugObject = debugTransform.GetComponent<GridDebugObject>();
                 gridDebugObject.SetGridObject(GetGridObject(gridPosition));

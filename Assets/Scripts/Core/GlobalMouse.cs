@@ -2,13 +2,6 @@ using UnityEngine;
 
 public class GlobalMouse : MonoBehaviour
 {
-    private static GlobalMouse _instance;
-
-    private void Awake()
-    {
-        _instance = this;
-    }
-
     public static bool TryGetIntersectingComponent<T>(int layerMaskId, out T component)
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -27,13 +20,13 @@ public class GlobalMouse : MonoBehaviour
     public static bool IsIntersecting(int layerMaskId)
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        return Physics.Raycast(ray, out RaycastHit raycastHit, float.MaxValue, layerMaskId);
+        return Physics.Raycast(ray, out RaycastHit _, float.MaxValue, layerMaskId);
     }
 
     public static Vector3 GetFloorPosition()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        Physics.Raycast(ray, out RaycastHit raycastHit, float.MaxValue, (int) Constants.LayerMaskIds.MainFloor);
+        Physics.Raycast(ray, out RaycastHit raycastHit, float.MaxValue, (int)Constants.LayerMaskIds.MainFloor);
         return raycastHit.point;
     }
 }
