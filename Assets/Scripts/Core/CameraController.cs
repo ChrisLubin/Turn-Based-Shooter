@@ -5,8 +5,16 @@ public class CameraController : MonoBehaviour
 {
     private CinemachineTransposer _cinemachineTransposer;
     private Vector3 _targetFollowOffset;
+    private Vector3 _targetMovementPosition;
+    private Vector3 _targetPanPosition;
     private const float _MIN_FOLLOW_Y_OFFSET = 2f;
     private const float _MAX_FOLLOW_Y_OFFSET = 12f;
+    [SerializeField] private float _moveSmoothingSpeed;
+    [SerializeField] private float _moveSpeed;
+    [SerializeField] private float _panSmoothingSpeed;
+    [SerializeField] private float _panSpeed;
+    [SerializeField] private float _tiltSmoothingSpeed;
+    [SerializeField] private float _tiltSpeed;
 
     private void Awake()
     {
@@ -16,7 +24,15 @@ public class CameraController : MonoBehaviour
 
     private void Start()
     {
+        this._targetMovementPosition = transform.position;
+        this._targetPanPosition = transform.eulerAngles;
         this._targetFollowOffset = this._cinemachineTransposer.m_FollowOffset;
+        this._moveSmoothingSpeed = 6f;
+        this._moveSpeed = 0.12f;
+        this._panSmoothingSpeed = 5.91f;
+        this._panSpeed = 0.8f;
+        this._tiltSmoothingSpeed = 5f;
+        this._tiltSpeed = 1f;
     }
 
     private void Update()
@@ -29,46 +45,48 @@ public class CameraController : MonoBehaviour
     private void HandleMovement()
     {
         Vector3 inputMoveDir = new();
+        transform.position = Vector3.Lerp(transform.position, this._targetMovementPosition, Time.deltaTime * this._moveSmoothingSpeed);
         if (Input.GetKey(KeyCode.W))
         {
-            inputMoveDir.z += 1;
+            inputMoveDir.z += this._moveSpeed;
         }
         if (Input.GetKey(KeyCode.S))
         {
-            inputMoveDir.z -= 1;
+            inputMoveDir.z -= this._moveSpeed;
         }
         if (Input.GetKey(KeyCode.A))
         {
-            inputMoveDir.x -= 1;
+            inputMoveDir.x -= this._moveSpeed;
         }
         if (Input.GetKey(KeyCode.D))
         {
-            inputMoveDir.x += 1;
+            inputMoveDir.x += this._moveSpeed;
         }
 
-        Vector3 moveVector = transform.forward * inputMoveDir.z + transform.right * inputMoveDir.x;
-        transform.position += moveVector * 10f * Time.deltaTime;
+        this._targetMovementPosition += transform.forward * inputMoveDir.z + transform.right * inputMoveDir.x;
     }
 
     private void HandlePan()
     {
-        Vector3 rotationVector = new();
+        float eulerYAngleWithNegatives = transform.eulerAngles.y > 180 ? transform.eulerAngles.y - 360 : transform.eulerAngles.y;
+        Vector3 eulerAnglesWithNegatives = new(0, eulerYAngleWithNegatives, 0);
+        transform.eulerAngles = Vector3.Lerp(eulerAnglesWithNegatives, this._targetPanPosition, Time.deltaTime * this._panSmoothingSpeed);
+
         if (Input.GetKey(KeyCode.Q))
         {
-            rotationVector.y += 1f;
+            this._targetPanPosition.y += this._panSpeed;
         }
-        if (Input.GetKey(KeyCode.E))
+        else if (Input.GetKey(KeyCode.E))
         {
-            rotationVector.y -= 1f;
+            this._targetPanPosition.y -= this._panSpeed;
         }
-        transform.eulerAngles += rotationVector * 100f * Time.deltaTime;
+
+        this._targetPanPosition.y = Mathf.Clamp(this._targetPanPosition.y, -180f, 180f);
     }
 
     private void HandleTilt()
     {
-        float tiltAmount = 1f;
-        float tiltSpeed = 5f;
-        this._cinemachineTransposer.m_FollowOffset = Vector3.Lerp(this._cinemachineTransposer.m_FollowOffset, this._targetFollowOffset, Time.deltaTime * tiltSpeed);
+        this._cinemachineTransposer.m_FollowOffset = Vector3.Lerp(this._cinemachineTransposer.m_FollowOffset, this._targetFollowOffset, Time.deltaTime * this._tiltSmoothingSpeed);
 
         if (Input.mouseScrollDelta.y == 0)
         {
@@ -77,11 +95,11 @@ public class CameraController : MonoBehaviour
 
         if (Input.mouseScrollDelta.y > 0)
         {
-            this._targetFollowOffset.y += tiltAmount;
+            this._targetFollowOffset.y += this._tiltSpeed;
         }
         else
         {
-            this._targetFollowOffset.y -= tiltAmount;
+            this._targetFollowOffset.y -= this._tiltSpeed;
         }
 
         this._targetFollowOffset.y = Mathf.Clamp(this._targetFollowOffset.y, _MIN_FOLLOW_Y_OFFSET, _MAX_FOLLOW_Y_OFFSET);
