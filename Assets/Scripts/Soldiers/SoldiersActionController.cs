@@ -55,8 +55,8 @@ public class SoldiersActionController : MonoBehaviour
         this._selectedSoldier.SetTargetPosition(to);
     }
 
-    // public Soldier GetSelectedSolder()
-    // {
-    //     return this._selectedSoldier;
-    // }
+    public Soldier GetSelectedSolder()
+    {
+        return this._selectedSoldier;
+    }
 }
