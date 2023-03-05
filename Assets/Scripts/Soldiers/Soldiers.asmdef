@@ -1,11 +1,9 @@
 {
-    "name": "Grid",
+    "name": "Soldiers",
     "rootNamespace": "",
     "references": [
-        "GUID:6055be8ebefd69e48b49212b09b47b2f",
         "GUID:30e5c3e657659a84f81f58307808c387",
-        "GUID:8258d21857b566f408311ba95cef26b0",
-        "GUID:7897d208d2df18a48a58f1ea5ab911e4"
+        "GUID:8258d21857b566f408311ba95cef26b0"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

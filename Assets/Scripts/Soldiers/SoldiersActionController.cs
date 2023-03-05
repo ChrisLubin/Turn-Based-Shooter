@@ -4,11 +4,11 @@ using UnityEngine;
 public class SoldiersActionController : MonoBehaviour
 {
     [SerializeField] private Soldier _selectedSoldier;
-    public event Action<Soldier> OnSelectedSoldierChange;
     public static SoldiersActionController Instance
     {
         get; private set;
     }
+    // public event Action<Soldier> OnSelectedSoldierChange;
 
     private void Awake()
     {
@@ -24,6 +24,7 @@ public class SoldiersActionController : MonoBehaviour
     private void Start()
     {
         GlobalMouse.Instance.OnLayerLeftClick += this.OnLayerLeftClick;
+        this._selectedSoldier.SetVisual(true);
     }
 
     private void OnLayerLeftClick(int layerMaskId, GameObject gameObject)
@@ -38,22 +39,24 @@ public class SoldiersActionController : MonoBehaviour
         }
     }
 
+    private void HandleSoldierSelection(Soldier soldier)
+    {
+        if (this._selectedSoldier != soldier)
+        {
+            this._selectedSoldier.SetVisual(false);
+            this._selectedSoldier = soldier;
+            this._selectedSoldier.SetVisual(true);
+            // this.OnSelectedSoldierChange?.Invoke(this._selectedSoldier);
+        }
+    }
+
     public void MoveSelectedSoldierToPosition(Vector3 to)
     {
         this._selectedSoldier.SetTargetPosition(to);
     }
 
-    private void HandleSoldierSelection(Soldier soldier)
-    {
-        if (this._selectedSoldier != soldier)
-        {
-            this._selectedSoldier = soldier;
-            OnSelectedSoldierChange?.Invoke(soldier);
-        }
-    }
-
-    public Soldier GetSelectedSoldier()
-    {
-        return this._selectedSoldier;
-    }
+    // public Soldier GetSelectedSolder()
+    // {
+    //     return this._selectedSoldier;
+    // }
 }

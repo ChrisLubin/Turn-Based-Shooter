@@ -52,4 +52,9 @@ public class GridController
     {
         return _gridObjectsMatrix[gridPosition.x, gridPosition.z];
     }
+
+    public bool IsValidGridPosition(GridPosition gridPosition)
+    {
+        return gridPosition.x >= 0 && gridPosition.z >= 0 && gridPosition.x < this._width && gridPosition.z < this._height;
+    }
 }

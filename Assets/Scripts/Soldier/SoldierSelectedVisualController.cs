@@ -2,29 +2,20 @@ using UnityEngine;
 
 public class SoldierSelectedVisualController : MonoBehaviour
 {
-    private Soldier _soldier;
     private CircleAnimation _selectedVisual;
 
     private void Awake()
     {
-        this._soldier = GetComponentInParent<Soldier>();
         this._selectedVisual = GetComponentInChildren<CircleAnimation>();
     }
 
     private void Start()
     {
-        Soldier selectedSoldier = SoldiersActionController.Instance.GetSelectedSoldier();
-        SoldiersActionController.Instance.OnSelectedSoldierChange += this.OnSelectedSoldierChange;
-        HandleShowVisual(selectedSoldier);
+        this.SetShowVisual(false);
     }
 
-    private void OnSelectedSoldierChange(Soldier selectedSoldier)
+    public void SetShowVisual(bool showVisual)
     {
-        HandleShowVisual(selectedSoldier);
-    }
-
-    private void HandleShowVisual(Soldier selectedSoldier)
-    {
-        this._selectedVisual.gameObject.SetActive(this._soldier == selectedSoldier);
+        this._selectedVisual.gameObject.SetActive(showVisual);
     }
 }

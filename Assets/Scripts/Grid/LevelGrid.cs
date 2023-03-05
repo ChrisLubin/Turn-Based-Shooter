@@ -11,6 +11,7 @@ public class LevelGrid : MonoBehaviour
     }
     private Soldier[] _soldiers;
     private IDictionary<Soldier, GridPosition> _soldierToGridPositionMap = new Dictionary<Soldier, GridPosition>();
+    private readonly int _MAX_SOLDIER_MOVE_DISTANCE = 1;
 
     private void Awake()
     {
@@ -40,7 +41,7 @@ public class LevelGrid : MonoBehaviour
         foreach (Soldier soldier in this._soldiers)
         {
             bool successfullyGotFrom = this._soldierToGridPositionMap.TryGetValue(soldier, out GridPosition from);
-            GridPosition to = GetGridPosition(soldier.transform.position);
+            GridPosition to = this._gridController.GetGridPosition(soldier.transform.position);
             if (successfullyGotFrom && from != to)
             {
                 ClearSoldierAtGridPosition(from);
@@ -48,7 +49,7 @@ public class LevelGrid : MonoBehaviour
 
                 foreach (Soldier innerSoldier in this._soldiers)
                 {
-                    bool anotherSoldierLeftMyGridPosition = GetGridPosition(innerSoldier.transform.position) == from;
+                    bool anotherSoldierLeftMyGridPosition = this._gridController.GetGridPosition(innerSoldier.transform.position) == from;
                     if (anotherSoldierLeftMyGridPosition)
                     {
                         SetSoldierAtGridPosition(from, innerSoldier);
@@ -64,6 +65,11 @@ public class LevelGrid : MonoBehaviour
         if (layerMaskId == (int)Constants.LayerMaskIds.MainFloor)
         {
             GridPosition gridPosition = this._gridController.GetGridPosition(GlobalMouse.Instance.GetFloorPosition());
+            if (!this.CanSoldierMoveToGridPosition(gridPosition))
+            {
+                return;
+            }
+
             Vector3 middleOfGridPosition = this._gridController.GetWorldPosition(gridPosition);
             SoldiersActionController.Instance.MoveSelectedSoldierToPosition(middleOfGridPosition);
         }
@@ -82,11 +88,35 @@ public class LevelGrid : MonoBehaviour
         gridObject.RemoveSoldier();
     }
 
-    private GridPosition GetGridPosition(Vector3 worldPosition) => this._gridController.GetGridPosition(worldPosition);
+    // private GridPosition[] GetGridPositionsSoldierCanMoveTo(Soldier soldier)
+    // {
+    //     List<GridPosition> validGridPosition = new();
+    //     GridPosition originalGridPosition = this._gridController.GetGridPosition(soldier.transform.position);
+
+    //     for (int x = originalGridPosition.x - _MAX_SOLDIER_MOVE_DISTANCE; x <= originalGridPosition.x + _MAX_SOLDIER_MOVE_DISTANCE; x++)
+    //     {
+    //         for (int z = originalGridPosition.z - _MAX_SOLDIER_MOVE_DISTANCE; z <= originalGridPosition.z + _MAX_SOLDIER_MOVE_DISTANCE; z++)
+    //         {
+    //             GridPosition gridPosition = new(x, z);
+    //             if (this.CanSoldierMoveToGridPosition(gridPosition) && originalGridPosition != gridPosition)
+    //             {
+    //                 validGridPosition.Add(gridPosition);
+    //                 Debug.Log($"{gridPosition}");
+    //             }
+    //         }
+    //     }
+
+    //     return validGridPosition.ToArray();
+    // }
+
+    private bool CanSoldierMoveToGridPosition(GridPosition originalGridPosition)
+    {
+        return this._gridController.IsValidGridPosition(originalGridPosition) && !this._gridController.GetGridObject(originalGridPosition).HasSoldier();
+    }
 
     public void OnSoldierSpawn(Soldier soldier)
     {
-        this._soldierToGridPositionMap.Add(soldier, GetGridPosition(soldier.transform.position));
-        SetSoldierAtGridPosition(GetGridPosition(soldier.transform.position), soldier);
+        this._soldierToGridPositionMap.Add(soldier, this._gridController.GetGridPosition(soldier.transform.position));
+        SetSoldierAtGridPosition(this._gridController.GetGridPosition(soldier.transform.position), soldier);
     }
 }

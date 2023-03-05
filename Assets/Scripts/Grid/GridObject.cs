@@ -27,4 +27,9 @@ public class GridObject
     {
         return this._soldier;
     }
+
+    public bool HasSoldier()
+    {
+        return this._soldier != null;
+    }
 }

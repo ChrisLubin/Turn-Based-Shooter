@@ -56,6 +56,7 @@ GameObject:
   - component: {fileID: 2685048874554715002}
   - component: {fileID: 2685048874554715003}
   - component: {fileID: 2518577715528475231}
+  - component: {fileID: 4794078270028815331}
   m_Layer: 8
   m_Name: Soldier
   m_TagString: Untagged
@@ -105,6 +106,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.42534524, y: 2.3063416, z: 0.42180097}
   m_Center: {x: 0.010283381, y: 0.65317047, z: -0.0005423799}
+--- !u!114 &4794078270028815331
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2685048874554715001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c299ee50e96fbf4b8330ae5648cc693, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &230213156915339781
 PrefabInstance:
   m_ObjectHideFlags: 0
