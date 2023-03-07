@@ -9,12 +9,15 @@ public class SoldiersActionController : MonoBehaviour
         get; private set;
     }
     public event Action OnSelectedSoldierChange;
+    private bool _isBusy;
+    [SerializeField] Transform plane;
 
     private void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
+            GlobalMouse.Instance.OnRightClick += this.OnRightClick;
             return;
         }
 
@@ -22,13 +25,30 @@ public class SoldiersActionController : MonoBehaviour
         Destroy(gameObject);
     }
 
+    private void Update()
+    {
+        this.plane.gameObject.SetActive(this._isBusy);
+    }
+
+    private void OnRightClick()
+    {
+        this._isBusy = true;
+        this._selectedSoldier.DoSpinAction(this.OnActionDone);
+    }
+
+    private void OnActionDone() => this._isBusy = false;
+
     private void Start()
     {
         GlobalMouse.Instance.OnLayerLeftClick += this.OnLayerLeftClick;
         this._selectedSoldier.SetVisual(true);
     }
 
-    public void MoveSelectedSoldierToPosition(Vector3 to) => this._selectedSoldier.SetTargetPosition(to);
+    public void MoveSelectedSoldierToPosition(Vector3 to)
+    {
+        this._isBusy = true;
+        this._selectedSoldier.DoMoveAction(this.OnActionDone, to);
+    }
     public Soldier GetSelectedSolder() => this._selectedSoldier;
 
     private void OnLayerLeftClick(int layerMaskId, GameObject gameObject)

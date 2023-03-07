@@ -1,6 +1,7 @@
+using System;
 using UnityEngine;
 
-public class SoldierMoveActionController : MonoBehaviour
+public class SoldierMoveActionController : BaseAction
 {
     private Vector3 _targetPosition;
     private Animator _soldierAnimator;
@@ -18,16 +19,29 @@ public class SoldierMoveActionController : MonoBehaviour
 
     private void Update()
     {
+        if (!this.IsActive)
+        {
+            return;
+        }
+
         this.HandleMove();
     }
 
-    public void SetTargetPosition(Vector3 targetPosition) => this._targetPosition = targetPosition;
+    private void SetTargetPosition(Vector3 targetPosition) => this._targetPosition = targetPosition;
+
+    public void DoAction(Action OnActionComplete, Vector3 targetPosition)
+    {
+        this.SetTargetPosition(targetPosition);
+        this.DoAction(OnActionComplete);
+    }
 
     private void HandleMove()
     {
         if (Vector3.Distance(transform.position, this._targetPosition) < 0.05f)
         {
             this._soldierAnimator.SetBool(_IS_WALKING_ANIMATION_NAME, false);
+            this.IsActive = false;
+            this._OnActionComplete();
             return;
         }
 
