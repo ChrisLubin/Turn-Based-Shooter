@@ -28,6 +28,7 @@ public class SoldierMoveActionController : BaseAction
     }
 
     private void SetTargetPosition(Vector3 targetPosition) => this._targetPosition = targetPosition;
+    public override string ToString() => "Move";
 
     public void DoAction(Action OnActionComplete, Vector3 targetPosition)
     {

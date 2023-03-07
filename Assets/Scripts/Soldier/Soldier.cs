@@ -7,7 +7,7 @@ public class Soldier : MonoBehaviour
     private SoldierSelectedVisualController _visualController;
     private SoldierMoveActionController _moveActionController;
     private SoldierSpinActionController _spinActionController;
-    private BaseAction[] _actions = Array.Empty<BaseAction>();
+    private BaseAction[] _actions;
     public bool HasActiveAction
     {
         get => this._actions.Any(action => action.IsActive);
@@ -19,8 +19,11 @@ public class Soldier : MonoBehaviour
         this._visualController = GetComponentInChildren<SoldierSelectedVisualController>();
         this._moveActionController = GetComponent<SoldierMoveActionController>();
         this._spinActionController = GetComponent<SoldierSpinActionController>();
-        this._actions = new BaseAction[] { this._moveActionController, this._spinActionController };
+        this._actions = GetComponents<BaseAction>();
     }
+
+    public void SetVisual(bool showVisual) => this._visualController.SetShowVisual(showVisual);
+    public BaseAction[] GetBaseActions() => this._actions;
 
     public void DoMoveAction(Action OnActionComplete, Vector3 targetPosition)
     {
@@ -41,5 +44,4 @@ public class Soldier : MonoBehaviour
         this._spinActionController.DoAction(onActionComplete);
     }
 
-    public void SetVisual(bool showVisual) => this._visualController.SetShowVisual(showVisual);
 }

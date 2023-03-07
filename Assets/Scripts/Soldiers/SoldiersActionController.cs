@@ -10,14 +10,14 @@ public class SoldiersActionController : MonoBehaviour
     }
     public event Action OnSelectedSoldierChange;
     private bool _isBusy;
-    [SerializeField] Transform plane;
+    private SoldiersActionVisualController _visualController;
 
     private void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
-            GlobalMouse.Instance.OnRightClick += this.OnRightClick;
+            this._visualController = GetComponentInChildren<SoldiersActionVisualController>();
             return;
         }
 
@@ -25,9 +25,16 @@ public class SoldiersActionController : MonoBehaviour
         Destroy(gameObject);
     }
 
+    private void Start()
+    {
+        GlobalMouse.Instance.OnLayerLeftClick += this.OnLayerLeftClick;
+        this._selectedSoldier.SetVisual(true);
+        this._visualController.UpdateSoldierActionButtons(this._selectedSoldier);
+    }
+
     private void Update()
     {
-        this.plane.gameObject.SetActive(this._isBusy);
+        // this.plane.gameObject.SetActive(this._isBusy);
     }
 
     private void OnRightClick()
@@ -37,12 +44,6 @@ public class SoldiersActionController : MonoBehaviour
     }
 
     private void OnActionDone() => this._isBusy = false;
-
-    private void Start()
-    {
-        GlobalMouse.Instance.OnLayerLeftClick += this.OnLayerLeftClick;
-        this._selectedSoldier.SetVisual(true);
-    }
 
     public void MoveSelectedSoldierToPosition(Vector3 to)
     {
@@ -72,6 +73,7 @@ public class SoldiersActionController : MonoBehaviour
             this._selectedSoldier.SetVisual(false);
             this._selectedSoldier = soldier;
             this._selectedSoldier.SetVisual(true);
+            this._visualController.UpdateSoldierActionButtons(this._selectedSoldier);
             this.OnSelectedSoldierChange?.Invoke();
         }
     }

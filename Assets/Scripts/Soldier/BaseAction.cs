@@ -11,4 +11,6 @@ public abstract class BaseAction : MonoBehaviour
         this._OnActionComplete = OnActionComplete;
         this.IsActive = true;
     }
+
+    public abstract override string ToString();
 }

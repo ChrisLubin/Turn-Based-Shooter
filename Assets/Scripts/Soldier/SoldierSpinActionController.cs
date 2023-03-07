@@ -25,6 +25,8 @@ public class SoldierSpinActionController : BaseAction
         transform.eulerAngles += new Vector3(0, addingAmount, 0);
     }
 
+    public override string ToString() => "Spin";
+
     public override void DoAction(Action OnActionComplete)
     {
         base.DoAction(OnActionComplete);
