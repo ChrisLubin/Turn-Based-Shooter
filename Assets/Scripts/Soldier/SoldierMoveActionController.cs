@@ -13,18 +13,15 @@ public class SoldierMoveActionController : MonoBehaviour
 
     private void Start()
     {
-        SetTargetPosition(transform.position);
+        this.SetTargetPosition(transform.position);
     }
 
     private void Update()
     {
-        HandleMove();
+        this.HandleMove();
     }
 
-    public void SetTargetPosition(Vector3 targetPosition)
-    {
-        this._targetPosition = targetPosition;
-    }
+    public void SetTargetPosition(Vector3 targetPosition) => this._targetPosition = targetPosition;
 
     private void HandleMove()
     {

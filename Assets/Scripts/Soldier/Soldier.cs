@@ -2,15 +2,15 @@ using UnityEngine;
 
 public class Soldier : MonoBehaviour
 {
-    private SoldierSelectedVisualController _solderSelectedVisualController;
-    private SoldierMoveActionController _solderMoveActionController;
+    private SoldierSelectedVisualController _visualController;
+    private SoldierMoveActionController _moveActionController;
 
     private void Awake()
     {
-        this._solderSelectedVisualController = GetComponentInChildren<SoldierSelectedVisualController>();
-        this._solderMoveActionController = GetComponent<SoldierMoveActionController>();
+        this._visualController = GetComponentInChildren<SoldierSelectedVisualController>();
+        this._moveActionController = GetComponent<SoldierMoveActionController>();
     }
 
-    public void SetTargetPosition(Vector3 targetPosition) => this._solderMoveActionController.SetTargetPosition(targetPosition);
-    public void SetVisual(bool showVisual) => this._solderSelectedVisualController.SetShowVisual(showVisual);
+    public void SetTargetPosition(Vector3 targetPosition) => this._moveActionController.SetTargetPosition(targetPosition);
+    public void SetVisual(bool showVisual) => this._visualController.SetShowVisual(showVisual);
 }

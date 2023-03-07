@@ -14,8 +14,5 @@ public class SoldierSelectedVisualController : MonoBehaviour
         this.SetShowVisual(false);
     }
 
-    public void SetShowVisual(bool showVisual)
-    {
-        this._selectedVisual.gameObject.SetActive(showVisual);
-    }
+    public void SetShowVisual(bool showVisual) => this._selectedVisual.gameObject.SetActive(showVisual);
 }

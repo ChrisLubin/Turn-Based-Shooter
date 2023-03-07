@@ -265,7 +265,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80f73ad701835e842941796d16f5e5e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _selectedSoldier: {fileID: 845757051}
+  _selectedSoldier: {fileID: 1359502150}
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -563,7 +563,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb4cbe8fc9ab297449d58bbb15bb3298, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _gridDebugObjectPrefab: {fileID: 9036306225526686952, guid: cd8d5517438a4c740a51089279ee16b8,
+  _gridTilePrefab: {fileID: 9036306225526686952, guid: cd8d5517438a4c740a51089279ee16b8,
     type: 3}
 --- !u!4 &415786085
 Transform:
@@ -698,18 +698,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &845757051 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2685048874554715003, guid: ad46d69631d2f8741a907dd8d96299b8,
-    type: 3}
-  m_PrefabInstance: {fileID: 544473337}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c08e24b193303eb4bb56438f27ae0776, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &988698001
 GameObject:
   m_ObjectHideFlags: 3
@@ -856,6 +844,18 @@ MonoBehaviour:
   _panSpeed: 0
   _tiltSmoothingSpeed: 0
   _tiltSpeed: 0
+--- !u!114 &1359502150 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2685048874554715003, guid: ad46d69631d2f8741a907dd8d96299b8,
+    type: 3}
+  m_PrefabInstance: {fileID: 2685048874787997452}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c08e24b193303eb4bb56438f27ae0776, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1719606005
 GameObject:
   m_ObjectHideFlags: 0

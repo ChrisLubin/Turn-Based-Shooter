@@ -10,27 +10,30 @@ public class GlobalMouse : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance != null)
+        if (Instance == null)
         {
-            Debug.LogError("There's more than one GlobalMouse! " + transform + " - " + Instance);
-            Destroy(gameObject);
+            Instance = this;
             return;
         }
-        Instance = this;
+
+        Debug.LogError("There's more than one GlobalMouse! " + transform + " - " + Instance);
+        Destroy(gameObject);
     }
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(this._LEFT_CLICK_ID))
+        if (!Input.GetMouseButtonDown(this._LEFT_CLICK_ID))
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            Physics.Raycast(ray, out RaycastHit raycastHit, float.MaxValue);
-            GameObject gameObject = raycastHit.collider.gameObject;
-            int layerMaskId = gameObject.layer;
-            if (layerMaskId != (int)Constants.LayerMaskIds.Default && layerMaskId != (int)Constants.LayerMaskIds.IgnoreRaycast)
-            {
-                this.OnLayerLeftClick?.Invoke(1 << layerMaskId, gameObject);
-            }
+            return;
+        }
+
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Physics.Raycast(ray, out RaycastHit raycastHit, float.MaxValue);
+        GameObject gameObject = raycastHit.collider.gameObject;
+        int layerMaskId = gameObject.layer;
+        if (layerMaskId != (int)Constants.LayerMaskIds.Default && layerMaskId != (int)Constants.LayerMaskIds.IgnoreRaycast)
+        {
+            this.OnLayerLeftClick?.Invoke(1 << layerMaskId, gameObject);
         }
     }
 

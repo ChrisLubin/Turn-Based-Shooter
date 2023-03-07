@@ -8,17 +8,18 @@ public class SoldiersActionController : MonoBehaviour
     {
         get; private set;
     }
-    // public event Action<Soldier> OnSelectedSoldierChange;
+    public event Action OnSelectedSoldierChange;
 
     private void Awake()
     {
-        if (Instance != null)
+        if (Instance == null)
         {
-            Debug.LogError("There's more than one SoldierActionController! " + transform + " - " + Instance);
-            Destroy(gameObject);
+            Instance = this;
             return;
         }
-        Instance = this;
+
+        Debug.LogError("There's more than one SoldierActionController! " + transform + " - " + Instance);
+        Destroy(gameObject);
     }
 
     private void Start()
@@ -27,15 +28,20 @@ public class SoldiersActionController : MonoBehaviour
         this._selectedSoldier.SetVisual(true);
     }
 
+    public void MoveSelectedSoldierToPosition(Vector3 to) => this._selectedSoldier.SetTargetPosition(to);
+    public Soldier GetSelectedSolder() => this._selectedSoldier;
+
     private void OnLayerLeftClick(int layerMaskId, GameObject gameObject)
     {
-        if (layerMaskId == (int)Constants.LayerMaskIds.Soldier)
+        if (layerMaskId != (int)Constants.LayerMaskIds.Soldier)
         {
-            bool gotSoldier = gameObject.TryGetComponent<Soldier>(out Soldier soldier);
-            if (gotSoldier)
-            {
-                HandleSoldierSelection(soldier);
-            }
+            return;
+        }
+
+        bool gotSoldier = gameObject.TryGetComponent<Soldier>(out Soldier soldier);
+        if (gotSoldier)
+        {
+            HandleSoldierSelection(soldier);
         }
     }
 
@@ -46,17 +52,7 @@ public class SoldiersActionController : MonoBehaviour
             this._selectedSoldier.SetVisual(false);
             this._selectedSoldier = soldier;
             this._selectedSoldier.SetVisual(true);
-            // this.OnSelectedSoldierChange?.Invoke(this._selectedSoldier);
+            this.OnSelectedSoldierChange?.Invoke();
         }
-    }
-
-    public void MoveSelectedSoldierToPosition(Vector3 to)
-    {
-        this._selectedSoldier.SetTargetPosition(to);
-    }
-
-    public Soldier GetSelectedSolder()
-    {
-        return this._selectedSoldier;
     }
 }
