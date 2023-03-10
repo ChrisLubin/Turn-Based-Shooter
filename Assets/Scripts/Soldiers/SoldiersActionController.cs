@@ -8,7 +8,7 @@ public class SoldiersActionController : MonoBehaviour
     {
         get; private set;
     }
-    public event Action OnSelectedSoldierChange;
+    public event Action OnSelectedActionChange;
     private bool _isBusy;
     private SoldiersActionVisualController _visualController;
     private BaseAction _selectedAction;
@@ -36,6 +36,7 @@ public class SoldiersActionController : MonoBehaviour
     }
 
     public Soldier GetSelectedSolder() => this._selectedSoldier;
+    public BaseAction GetSelectedAction() => this._selectedAction;
     private void OnActionDone() => this._isBusy = false;
 
     public void DoAction(Vector3 to)
@@ -52,6 +53,7 @@ public class SoldiersActionController : MonoBehaviour
     private void OnActionChange(string actionName)
     {
         this._selectedAction = this._selectedSoldier.GetAction(actionName);
+        this.OnSelectedActionChange?.Invoke();
     }
 
     private void OnLayerLeftClick(int layerMaskId, GameObject gameObject)
@@ -62,6 +64,14 @@ public class SoldiersActionController : MonoBehaviour
         }
 
         bool gotSoldier = gameObject.TryGetComponent<Soldier>(out Soldier soldier);
+
+        if (gotSoldier && this._selectedSoldier == soldier && this._selectedAction.MaxEffectiveDistance == 0)
+        {
+            // Action can only be done on soldier's current position
+            this.DoAction(soldier.transform.position);
+            return;
+        }
+
         if (gotSoldier)
         {
             HandleSoldierSelection(soldier);
@@ -80,6 +90,6 @@ public class SoldiersActionController : MonoBehaviour
         this._selectedSoldier.SetVisual(true);
         this._visualController.UpdateSoldierActionButtons(this._selectedSoldier, out BaseAction firstAction);
         this._selectedAction = firstAction;
-        this.OnSelectedSoldierChange?.Invoke();
+        this.OnSelectedActionChange?.Invoke();
     }
 }

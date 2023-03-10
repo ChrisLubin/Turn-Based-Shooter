@@ -6,6 +6,11 @@ public class SoldierSpinActionController : BaseAction
     private float _totalSpin;
     private float _originalRotationAngle;
 
+    private void Awake()
+    {
+        this.MaxEffectiveDistance = 0;
+    }
+
     private void Update()
     {
         if (!this.IsActive)

@@ -10,6 +10,7 @@ public class SoldierMoveActionController : BaseAction
     private void Awake()
     {
         this._soldierAnimator = GetComponentInChildren<Animator>();
+        this.MaxEffectiveDistance = 2;
     }
 
     private void Start()

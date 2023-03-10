@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class LevelGrid : MonoBehaviour
 {
@@ -10,7 +11,6 @@ public class LevelGrid : MonoBehaviour
     public static LevelGrid Instance { get; private set; }
     private Soldier[] _soldiers;
     private IDictionary<Soldier, GridTile> _soldierToGridTileMap = new Dictionary<Soldier, GridTile>();
-    private const int _MAX_SOLDIER_MOVE_DISTANCE = 1;
     private GridTile[] _gridTilesWithActiveVisual = Array.Empty<GridTile>();
 
     private void Awake()
@@ -29,7 +29,7 @@ public class LevelGrid : MonoBehaviour
     private void Start()
     {
         GlobalMouse.Instance.OnLayerLeftClick += this.OnLayerLeftClick;
-        SoldiersActionController.Instance.OnSelectedSoldierChange += this.UpdateActiveGridTiles;
+        SoldiersActionController.Instance.OnSelectedActionChange += this.UpdateActiveGridTiles;
         this._gridController.CreateGridTiles(this.transform, _gridTilePrefab);
         this._soldiers = GameObject.FindObjectsOfType<Soldier>();
         foreach (Soldier soldier in this._soldiers)
@@ -70,6 +70,11 @@ public class LevelGrid : MonoBehaviour
 
     private void OnLayerLeftClick(int layerMaskId, GameObject gameObject)
     {
+        if (EventSystem.current.IsPointerOverGameObject())
+        {
+            // Hovering over UI element
+            return;
+        }
         if (layerMaskId != (int)Constants.LayerMaskIds.MainFloor)
         {
             return;
@@ -78,7 +83,7 @@ public class LevelGrid : MonoBehaviour
         Vector3 selectedSoldierPosition = SoldiersActionController.Instance.GetSelectedSolder().transform.position;
         GridPosition from = this._gridController.GetGridPosition(selectedSoldierPosition);
         GridPosition to = this._gridController.GetGridPosition(GlobalMouse.Instance.GetFloorPosition());
-        if (!this.CanSoldierMoveToGridPosition(from, to))
+        if (!this.CanDoActionOnGridPosition(from, to))
         {
             return;
         }
@@ -93,20 +98,28 @@ public class LevelGrid : MonoBehaviour
         this._soldierToGridTileMap[soldier] = gridTile;
     }
 
-    private bool CanSoldierMoveToGridPosition(GridPosition from, GridPosition to)
+    private bool CanDoActionOnGridPosition(GridPosition from, GridPosition to)
     {
+        BaseAction selectedAction = SoldiersActionController.Instance.GetSelectedAction();
         if (!this._gridController.IsValidGridPosition(to))
         {
             return false;
         }
-        if (this._gridController.GetGridTileSoldierController(to).HasSoldier())
+        if (this._gridController.GetGridTileSoldierController(to).HasSoldier() && selectedAction.MaxEffectiveDistance != 0)
         {
             return false;
         }
         GridTile fromGridTile = this._gridController.GetGridTile(this._gridController.GetWorldPosition(from));
         GridTile toGridTile = this._gridController.GetGridTile(this._gridController.GetWorldPosition(to));
 
-        return this._gridController.GetSurroundingGridTiles(fromGridTile, _MAX_SOLDIER_MOVE_DISTANCE).Contains(toGridTile);
+        if (selectedAction.MaxEffectiveDistance == 0)
+        {
+            // Action can only be done on soldier's current position
+            GridPosition soldiersGridPosition = this._gridController.GetGridPosition(SoldiersActionController.Instance.GetSelectedSolder().transform.position);
+            return soldiersGridPosition == to;
+        }
+
+        return this._gridController.GetSurroundingGridTiles(fromGridTile, selectedAction.MaxEffectiveDistance).Contains(toGridTile);
     }
 
     private void OnSoldierSpawn(Soldier soldier)
@@ -138,7 +151,16 @@ public class LevelGrid : MonoBehaviour
         Soldier selectedSoldier = SoldiersActionController.Instance.GetSelectedSolder();
         GridTile selectedSoldierGridTile = this._gridController.GetGridTile(selectedSoldier.transform.position);
         ClearAllActiveGridTiles();
-        GridTile[] surroundingGridTiles = this._gridController.GetSurroundingGridTiles(selectedSoldierGridTile, _MAX_SOLDIER_MOVE_DISTANCE);
+        BaseAction selectedAction = SoldiersActionController.Instance.GetSelectedAction();
+
+        if (selectedAction.MaxEffectiveDistance == 0)
+        {
+            // Action can only be done on soldier's current position
+            SetGridTilesActive(new[] { selectedSoldierGridTile });
+            return;
+        }
+
+        GridTile[] surroundingGridTiles = this._gridController.GetSurroundingGridTiles(selectedSoldierGridTile, selectedAction.MaxEffectiveDistance);
         SetGridTilesActive(surroundingGridTiles.Where(pos => !HasSoldier(pos)).ToArray());
     }
 }

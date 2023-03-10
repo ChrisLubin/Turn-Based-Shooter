@@ -38,6 +38,7 @@ public class GlobalMouse : MonoBehaviour
             {
                 this.OnLayerLeftClick?.Invoke(1 << layerMaskId, gameObject);
             }
+            return;
         }
     }
 
