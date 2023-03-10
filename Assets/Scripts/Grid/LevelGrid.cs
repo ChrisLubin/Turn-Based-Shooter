@@ -84,7 +84,7 @@ public class LevelGrid : MonoBehaviour
         }
 
         Vector3 middleOfGridPosition = this._gridController.GetWorldPosition(to);
-        SoldiersActionController.Instance.MoveSelectedSoldierToPosition(middleOfGridPosition);
+        SoldiersActionController.Instance.DoAction(middleOfGridPosition);
     }
 
     private void SetSoldierAtGridTile(GridTile gridTile, Soldier soldier)

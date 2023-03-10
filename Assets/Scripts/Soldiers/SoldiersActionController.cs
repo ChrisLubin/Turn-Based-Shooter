@@ -11,6 +11,7 @@ public class SoldiersActionController : MonoBehaviour
     public event Action OnSelectedSoldierChange;
     private bool _isBusy;
     private SoldiersActionVisualController _visualController;
+    private BaseAction _selectedAction;
 
     private void Awake()
     {
@@ -29,28 +30,29 @@ public class SoldiersActionController : MonoBehaviour
     {
         GlobalMouse.Instance.OnLayerLeftClick += this.OnLayerLeftClick;
         this._selectedSoldier.SetVisual(true);
-        this._visualController.UpdateSoldierActionButtons(this._selectedSoldier);
+        this._visualController.OnButtonClick += this.OnActionChange;
+        this._visualController.UpdateSoldierActionButtons(this._selectedSoldier, out BaseAction firstAction);
+        this._selectedAction = firstAction;
     }
 
-    private void Update()
-    {
-        // this.plane.gameObject.SetActive(this._isBusy);
-    }
-
-    private void OnRightClick()
-    {
-        this._isBusy = true;
-        this._selectedSoldier.DoSpinAction(this.OnActionDone);
-    }
-
+    public Soldier GetSelectedSolder() => this._selectedSoldier;
     private void OnActionDone() => this._isBusy = false;
 
-    public void MoveSelectedSoldierToPosition(Vector3 to)
+    public void DoAction(Vector3 to)
     {
+        if (this._isBusy)
+        {
+            return;
+        }
+
         this._isBusy = true;
-        this._selectedSoldier.DoMoveAction(this.OnActionDone, to);
+        this._selectedAction.DoAction(this.OnActionDone, to);
     }
-    public Soldier GetSelectedSolder() => this._selectedSoldier;
+
+    private void OnActionChange(string actionName)
+    {
+        this._selectedAction = this._selectedSoldier.GetAction(actionName);
+    }
 
     private void OnLayerLeftClick(int layerMaskId, GameObject gameObject)
     {
@@ -68,13 +70,16 @@ public class SoldiersActionController : MonoBehaviour
 
     private void HandleSoldierSelection(Soldier soldier)
     {
-        if (this._selectedSoldier != soldier)
+        if (this._selectedSoldier == soldier)
         {
-            this._selectedSoldier.SetVisual(false);
-            this._selectedSoldier = soldier;
-            this._selectedSoldier.SetVisual(true);
-            this._visualController.UpdateSoldierActionButtons(this._selectedSoldier);
-            this.OnSelectedSoldierChange?.Invoke();
+            return;
         }
+
+        this._selectedSoldier.SetVisual(false);
+        this._selectedSoldier = soldier;
+        this._selectedSoldier.SetVisual(true);
+        this._visualController.UpdateSoldierActionButtons(this._selectedSoldier, out BaseAction firstAction);
+        this._selectedAction = firstAction;
+        this.OnSelectedSoldierChange?.Invoke();
     }
 }

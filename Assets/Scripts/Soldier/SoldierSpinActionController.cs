@@ -25,11 +25,10 @@ public class SoldierSpinActionController : BaseAction
         transform.eulerAngles += new Vector3(0, addingAmount, 0);
     }
 
-    public override string ToString() => "Spin";
+    public override string ToString() => Constants.SoldierActionNames.Spin;
 
-    public override void DoAction(Action OnActionComplete)
+    protected override void DoAction(Vector3 _)
     {
-        base.DoAction(OnActionComplete);
         this._totalSpin = 0;
         this._originalRotationAngle = transform.eulerAngles.y;
     }

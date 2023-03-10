@@ -7,4 +7,10 @@ public static class Constants
         MainFloor = 1 << 7,
         Soldier = 1 << 8,
     }
+
+    public static class SoldierActionNames
+    {
+        public const string Move = "MOVE";
+        public const string Spin = "SPIN";
+    }
 }
