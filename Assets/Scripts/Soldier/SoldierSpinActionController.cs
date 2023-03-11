@@ -9,6 +9,7 @@ public class SoldierSpinActionController : BaseAction
     private void Awake()
     {
         this.MaxEffectiveDistance = 0;
+        this.ActionCost = 2;
     }
 
     private void Update()

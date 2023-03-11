@@ -6,6 +6,7 @@ public abstract class BaseAction : MonoBehaviour
     protected Action _OnActionComplete;
     public bool IsActive { get; protected set; }
     public int MaxEffectiveDistance { get; protected set; }
+    public int ActionCost { get; protected set; }
 
     public void DoAction(Action OnActionComplete, Vector3 worldPosition)
     {

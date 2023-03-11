@@ -8,7 +8,7 @@ public class ActionButtonController : MonoBehaviour
 {
     private TextMeshProUGUI _textMeshPro;
     private Button _button;
-    private BaseAction _action;
+    private string _actionName;
     public event Action<ActionButtonController, string> OnClick;
     private Image _selectedVisual;
 
@@ -22,14 +22,14 @@ public class ActionButtonController : MonoBehaviour
 
     private void Start()
     {
-        this._button.onClick.AddListener(() => this.OnClick?.Invoke(this, this._action.ToString()));
+        this._button.onClick.AddListener(() => this.OnClick?.Invoke(this, this._actionName));
     }
 
     public void SetSelectedVisual(bool showVisual) => this._selectedVisual.gameObject.SetActive(showVisual);
 
-    public void SetAction(BaseAction action)
+    public void SetActionName(string actionName)
     {
-        this._action = action;
-        this._textMeshPro.text = action.ToString();
+        this._actionName = actionName;
+        this._textMeshPro.text = actionName;
     }
 }
