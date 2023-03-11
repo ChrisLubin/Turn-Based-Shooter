@@ -4,12 +4,9 @@ using UnityEngine;
 public class SoldiersActionController : MonoBehaviour
 {
     [SerializeField] private Soldier _selectedSoldier;
-    public static SoldiersActionController Instance
-    {
-        get; private set;
-    }
+    public static SoldiersActionController Instance { get; private set; }
     public event Action OnSelectedActionChange;
-    private bool _isBusy;
+    public bool IsBusy { get; private set; }
     private SoldiersActionVisualController _visualController;
     private BaseAction _selectedAction;
 
@@ -37,16 +34,22 @@ public class SoldiersActionController : MonoBehaviour
 
     public Soldier GetSelectedSolder() => this._selectedSoldier;
     public BaseAction GetSelectedAction() => this._selectedAction;
-    private void OnActionDone() => this._isBusy = false;
+
+    private void OnActionDone()
+    {
+        this.IsBusy = false;
+        this._visualController.gameObject.SetActive(true);
+    }
 
     public void DoAction(Vector3 to)
     {
-        if (this._isBusy)
+        if (this.IsBusy)
         {
             return;
         }
 
-        this._isBusy = true;
+        this.IsBusy = true;
+        this._visualController.gameObject.SetActive(false);
         this._selectedAction.DoAction(this.OnActionDone, to);
     }
 
@@ -81,6 +84,10 @@ public class SoldiersActionController : MonoBehaviour
     private void HandleSoldierSelection(Soldier soldier)
     {
         if (this._selectedSoldier == soldier)
+        {
+            return;
+        }
+        if (this.IsBusy)
         {
             return;
         }

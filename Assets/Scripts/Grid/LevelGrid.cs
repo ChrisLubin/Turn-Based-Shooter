@@ -70,6 +70,10 @@ public class LevelGrid : MonoBehaviour
 
     private void OnLayerLeftClick(int layerMaskId, GameObject gameObject)
     {
+        if (SoldiersActionController.Instance.IsBusy)
+        {
+            return;
+        }
         if (EventSystem.current.IsPointerOverGameObject())
         {
             // Hovering over UI element
