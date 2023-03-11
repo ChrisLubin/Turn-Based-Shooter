@@ -5,6 +5,7 @@ public class SoldiersActionController : MonoBehaviour
 {
     [SerializeField] private Soldier _selectedSoldier;
     public static SoldiersActionController Instance { get; private set; }
+    public event Action OnActionCompleted;
     public event Action OnSelectedActionChange;
     public bool IsBusy { get; private set; }
     private SoldiersActionVisualController _visualController;
@@ -41,6 +42,7 @@ public class SoldiersActionController : MonoBehaviour
     {
         this.IsBusy = false;
         this._visualController.UpdateButtonsVisual(this._selectedSoldier.GetActionPoints());
+        this.OnActionCompleted?.Invoke();
     }
 
     public void DoAction(Vector3 to)

@@ -30,6 +30,7 @@ public class LevelGrid : MonoBehaviour
     {
         GlobalMouse.Instance.OnLayerLeftClick += this.OnLayerLeftClick;
         SoldiersActionController.Instance.OnSelectedActionChange += this.UpdateActiveGridTiles;
+        SoldiersActionController.Instance.OnActionCompleted += this.UpdateActiveGridTiles;
         this._gridController.CreateGridTiles(this.transform, _gridTilePrefab);
         this._soldiers = GameObject.FindObjectsOfType<Soldier>();
         foreach (Soldier soldier in this._soldiers)
@@ -157,6 +158,11 @@ public class LevelGrid : MonoBehaviour
         ClearAllActiveGridTiles();
         int selectedActionMaxEffectiveDistance = SoldiersActionController.Instance.GetSelectedActionEffectiveDistance();
 
+        if (selectedSoldier.GetActionPoints() == 0)
+        {
+            SetGridTilesActive(Array.Empty<GridTile>());
+            return;
+        }
         if (selectedActionMaxEffectiveDistance == 0)
         {
             // Action can only be done on soldier's current position
