@@ -41,14 +41,14 @@ public class SoldiersActionController : MonoBehaviour
 
     public void OnTurnEnd()
     {
-        this._visualController.UpdateButtonsVisual(this._selectedSoldier.GetActionPoints());
+        this._visualController.SetButtonsVisual(this._selectedSoldier.GetActionPoints() != 0);
         this._visualController.UpdateActionPoints(this._selectedSoldier.GetActionPoints());
     }
 
     private void OnActionDone()
     {
         this.IsBusy = false;
-        this._visualController.UpdateButtonsVisual(this._selectedSoldier.GetActionPoints());
+        this._visualController.SetButtonsVisual(this._selectedSoldier.GetActionPoints() != 0);
         this.OnActionCompleted?.Invoke();
         TurnController.Instance.SetShowEndTurnButton(true);
     }
@@ -71,8 +71,7 @@ public class SoldiersActionController : MonoBehaviour
         this.IsBusy = true;
         this._selectedSoldier.DoAction(this.OnActionDone, to, this._selectedActionName);
         this._visualController.UpdateActionPoints(this._selectedSoldier.GetActionPoints());
-        this._visualController.UpdateButtonsVisual(soldierActionPoints);
-        this._visualController.UpdateButtonsVisual(this._selectedSoldier.GetActionPoints());
+        this._visualController.SetButtonsVisual(false);
         TurnController.Instance.SetShowEndTurnButton(false);
     }
 
@@ -120,8 +119,8 @@ public class SoldiersActionController : MonoBehaviour
         this._selectedSoldier.SetVisual(true);
         this._visualController.UpdateSoldierActionButtons(this._selectedSoldier, out string firstActionName);
         this._visualController.UpdateActionPoints(this._selectedSoldier.GetActionPoints());
+        this._visualController.SetButtonsVisual(this._selectedSoldier.GetActionPoints() != 0);
         this._selectedActionName = firstActionName;
-        this._visualController.UpdateButtonsVisual(this._selectedSoldier.GetActionPoints());
         this.OnSelectedActionChange?.Invoke();
     }
 }
