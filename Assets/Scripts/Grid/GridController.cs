@@ -18,7 +18,6 @@ public class GridController
 
     public Vector3 GetWorldPosition(GridPosition gridPosition) => new Vector3(gridPosition.x, 0, gridPosition.z) * this._cellSize;
     public GridPosition GetGridPosition(Vector3 worldPosition) => new GridPosition(Mathf.RoundToInt(worldPosition.x / this._cellSize), Mathf.RoundToInt(worldPosition.z / this._cellSize));
-    public GridTileSoldierController GetGridTileSoldierController(GridPosition gridPosition) => this._gridTileMatrix[gridPosition.x, gridPosition.z].GetGridTileSoldierController();
     public bool IsValidGridPosition(GridPosition gridPosition) => gridPosition.x >= 0 && gridPosition.z >= 0 && gridPosition.x < this._width && gridPosition.z < this._height;
 
     public GridTile GetGridTile(Vector3 worldPosition)
@@ -42,7 +41,7 @@ public class GridController
         }
     }
 
-    public GridTile[] GetSurroundingGridTiles(GridTile originalGridTile, int offset)
+    public GridTile[] GetSurroundingGridTiles(GridTile originalGridTile, int offset, bool doCirclularShape = false)
     {
         List<GridTile> surroundingGridTiles = new();
         GridPosition originalGridPosition = originalGridTile.GetGridPosition();
@@ -51,6 +50,12 @@ public class GridController
         {
             for (int z = originalGridPosition.z - offset; z <= originalGridPosition.z + offset; z++)
             {
+                int distance = Mathf.Abs(x) + Mathf.Abs(z);
+                if (doCirclularShape && distance > originalGridPosition.x + offset)
+                {
+                    continue;
+                }
+
                 GridPosition gridPosition = new(x, z);
                 if (IsValidGridPosition(gridPosition) && originalGridPosition != gridPosition)
                 {

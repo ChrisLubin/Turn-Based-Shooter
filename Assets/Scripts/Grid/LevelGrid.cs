@@ -32,6 +32,7 @@ public class LevelGrid : MonoBehaviour
         SoldiersActionController.Instance.OnSelectedActionChange += this.UpdateActiveGridTiles;
         SoldiersActionController.Instance.OnActionCompleted += this.UpdateActiveGridTiles;
         SoldiersActionController.Instance.OnSelectedSoldierHasNoActionPoints += this.ClearAllActiveGridTiles;
+        SoldiersActionController.Instance.OnShoot += this.OnShoot;
         TurnController.Instance.OnTurnEnd += this.OnTurnEnd;
         this._gridController.CreateGridTiles(this.transform, _gridTilePrefab);
         this._soldiers = GameObject.FindObjectsOfType<Soldier>();
@@ -68,8 +69,8 @@ public class LevelGrid : MonoBehaviour
         }
     }
 
-    private bool HasSoldier(GridTile gridTile) => gridTile.HasSoldier();
     private void ClearSoldierAtGridTile(GridTile gridTile) => gridTile.RemoveSoldier();
+    private void OnShoot(Vector3 positionToShoot, int damage) => this._gridController.GetGridTile(positionToShoot).GetSoldier().TakeDamage(damage);
 
     private void OnTurnEnd(bool isPlayerTurn)
     {
@@ -122,26 +123,37 @@ public class LevelGrid : MonoBehaviour
 
     private bool CanDoActionOnGridPosition(GridPosition from, GridPosition to)
     {
-        int selectedActionMaxEffectiveDistance = SoldiersActionController.Instance.GetSelectedActionEffectiveDistance();
         if (!this._gridController.IsValidGridPosition(to))
         {
             return false;
         }
-        if (this._gridController.GetGridTileSoldierController(to).HasSoldier() && selectedActionMaxEffectiveDistance != 0)
-        {
-            return false;
-        }
+
+        int actionMaxEffectiveDistance = SoldiersActionController.Instance.GetSelectedActionEffectiveDistance();
+        string actionTargetType = SoldiersActionController.Instance.GetSelectedActionTargetType();
         GridTile fromGridTile = this._gridController.GetGridTile(this._gridController.GetWorldPosition(from));
         GridTile toGridTile = this._gridController.GetGridTile(this._gridController.GetWorldPosition(to));
 
-        if (selectedActionMaxEffectiveDistance == 0)
+        switch (actionTargetType)
         {
-            // Action can only be done on soldier's current position
-            GridPosition soldiersGridPosition = this._gridController.GetGridPosition(SoldiersActionController.Instance.GetSelectedSolder().transform.position);
-            return soldiersGridPosition == to;
+            case Constants.SoldierActionTargetTypes.Self:
+                return from == to;
+            case Constants.SoldierActionTargetTypes.Enemy:
+                if (!toGridTile.HasEnemySoldier())
+                {
+                    return false;
+                }
+
+                return this._gridController.GetSurroundingGridTiles(fromGridTile, actionMaxEffectiveDistance, true).Contains(toGridTile);
+            case Constants.SoldierActionTargetTypes.EmptyTile:
+                if (toGridTile.HasSoldier())
+                {
+                    return false;
+                }
+
+                return this._gridController.GetSurroundingGridTiles(fromGridTile, actionMaxEffectiveDistance).Contains(toGridTile);
         }
 
-        return this._gridController.GetSurroundingGridTiles(fromGridTile, selectedActionMaxEffectiveDistance).Contains(toGridTile);
+        return false;
     }
 
     private void OnSoldierSpawn(Soldier soldier)
@@ -171,23 +183,33 @@ public class LevelGrid : MonoBehaviour
     private void UpdateActiveGridTiles()
     {
         Soldier selectedSoldier = SoldiersActionController.Instance.GetSelectedSolder();
-        GridTile selectedSoldierGridTile = this._gridController.GetGridTile(selectedSoldier.transform.position);
-        ClearAllActiveGridTiles();
+        string selectedActionTargetType = SoldiersActionController.Instance.GetSelectedActionTargetType();
         int selectedActionMaxEffectiveDistance = SoldiersActionController.Instance.GetSelectedActionEffectiveDistance();
+        GridTile selectedSoldierGridTile = this._gridController.GetGridTile(selectedSoldier.transform.position);
+        GridTile[] squareSurroundingGridTiles = this._gridController.GetSurroundingGridTiles(selectedSoldierGridTile, selectedActionMaxEffectiveDistance);
+        GridTile[] validGridTiles = Array.Empty<GridTile>();
+        ClearAllActiveGridTiles();
 
         if (selectedSoldier.GetActionPoints() == 0)
         {
             SetGridTilesActive(Array.Empty<GridTile>());
             return;
         }
-        if (selectedActionMaxEffectiveDistance == 0)
+
+        switch (selectedActionTargetType)
         {
-            // Action can only be done on soldier's current position
-            SetGridTilesActive(new[] { selectedSoldierGridTile });
-            return;
+            case Constants.SoldierActionTargetTypes.Self:
+                validGridTiles = new[] { selectedSoldierGridTile };
+                break;
+            case Constants.SoldierActionTargetTypes.Enemy:
+                GridTile[] circularSurroundingGridTiles = this._gridController.GetSurroundingGridTiles(selectedSoldierGridTile, selectedActionMaxEffectiveDistance, true);
+                validGridTiles = circularSurroundingGridTiles.Where(tile => tile.HasEnemySoldier()).ToArray();
+                break;
+            case Constants.SoldierActionTargetTypes.EmptyTile:
+                validGridTiles = squareSurroundingGridTiles.Where(tile => !tile.HasSoldier()).ToArray();
+                break;
         }
 
-        GridTile[] surroundingGridTiles = this._gridController.GetSurroundingGridTiles(selectedSoldierGridTile, selectedActionMaxEffectiveDistance);
-        SetGridTilesActive(surroundingGridTiles.Where(pos => !HasSoldier(pos)).ToArray());
+        SetGridTilesActive(validGridTiles);
     }
 }

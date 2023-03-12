@@ -12,5 +12,13 @@ public static class Constants
     {
         public const string Move = "MOVE";
         public const string Spin = "SPIN";
+        public const string Shoot = "SHOOT";
+    }
+
+    public static class SoldierActionTargetTypes
+    {
+        public const string Self = "SELF";
+        public const string Enemy = "ENEMY";
+        public const string EmptyTile = "EMPTY_TILE";
     }
 }

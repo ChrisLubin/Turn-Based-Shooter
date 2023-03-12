@@ -12,6 +12,7 @@ public class SoldierMoveActionController : BaseAction
         this._soldierAnimator = GetComponentInChildren<Animator>();
         this.MaxEffectiveDistance = 2;
         this.ActionCost = 1;
+        this.TargetType = Constants.SoldierActionTargetTypes.EmptyTile;
     }
 
     private void Start()

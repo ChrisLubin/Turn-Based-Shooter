@@ -10,6 +10,7 @@ public class SoldierSpinActionController : BaseAction
     {
         this.MaxEffectiveDistance = 0;
         this.ActionCost = 2;
+        this.TargetType = Constants.SoldierActionTargetTypes.Self;
     }
 
     private void Update()

@@ -7,4 +7,5 @@ public class GridTileSoldierController
     public void RemoveSoldier() => this._soldier = null;
     public Soldier GetSoldier() => this._soldier;
     public bool HasSoldier() => this._soldier != null;
+    public bool HasEnemySoldier() => this.HasSoldier() && this._soldier.GetIsEnemy();
 }

@@ -22,11 +22,12 @@ public class GridTile : MonoBehaviour
     }
 
     public bool HasSoldier() => this._soldierController.HasSoldier();
+    public bool HasEnemySoldier() => this._soldierController.HasEnemySoldier();
     public void RemoveSoldier() => this._soldierController.RemoveSoldier();
+    public Soldier GetSoldier() => this._soldierController.GetSoldier();
     public void SetSoldier(Soldier soldier) => this._soldierController.SetSoldier(soldier);
     public GridPosition GetGridPosition() => this._gridPosition;
     public void SetGridPosition(GridPosition gridPosition) => this._gridPosition = gridPosition;
-    public GridTileSoldierController GetGridTileSoldierController() => this._soldierController;
     public void SetVisual(bool showVisual) => this._visualController.SetVisual(showVisual);
     public override string ToString() => $"{this._gridPosition}\n{this._soldierController}";
 
