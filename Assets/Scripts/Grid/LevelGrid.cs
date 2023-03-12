@@ -31,6 +31,7 @@ public class LevelGrid : MonoBehaviour
         GlobalMouse.Instance.OnLayerLeftClick += this.OnLayerLeftClick;
         SoldiersActionController.Instance.OnSelectedActionChange += this.UpdateActiveGridTiles;
         SoldiersActionController.Instance.OnActionCompleted += this.UpdateActiveGridTiles;
+        SoldiersActionController.Instance.OnSelectedSoldierHasNoActionPoints += this.ClearAllActiveGridTiles;
         TurnController.Instance.OnTurnEnd += this.OnTurnEnd;
         this._gridController.CreateGridTiles(this.transform, _gridTilePrefab);
         this._soldiers = GameObject.FindObjectsOfType<Soldier>();
@@ -150,7 +151,7 @@ public class LevelGrid : MonoBehaviour
         {
             gridTile.SetVisual(false);
         }
-        Array.Clear(this._gridTilesWithActiveVisual, 0, this._gridTilesWithActiveVisual.Length);
+        this._gridTilesWithActiveVisual = Array.Empty<GridTile>();
     }
 
     private void UpdateActiveGridTiles()

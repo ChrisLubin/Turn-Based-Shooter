@@ -7,6 +7,7 @@ public class SoldiersActionController : MonoBehaviour
     public static SoldiersActionController Instance { get; private set; }
     public event Action OnActionCompleted;
     public event Action OnSelectedActionChange;
+    public event Action OnSelectedSoldierHasNoActionPoints;
     public bool IsBusy { get; private set; }
     private SoldiersActionVisualController _visualController;
     private string _selectedActionName;
@@ -73,6 +74,10 @@ public class SoldiersActionController : MonoBehaviour
         this._visualController.UpdateActionPoints(this._selectedSoldier.GetActionPoints());
         this._visualController.SetButtonsVisual(false);
         TurnController.Instance.SetShowEndTurnButton(false);
+        if (this._selectedSoldier.GetActionPoints() == 0)
+        {
+            this.OnSelectedSoldierHasNoActionPoints?.Invoke();
+        }
     }
 
     private void OnActionChange(string actionName)
