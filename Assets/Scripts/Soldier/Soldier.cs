@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class Soldier : MonoBehaviour
 {
+    private const int _MAX_ACTION_POINTS = 2;
     private SoldierSelectedVisualController _visualController;
     private BaseAction[] _actions;
-    private int _actionPoints = 2;
+    private int _actionPoints = _MAX_ACTION_POINTS;
     public bool HasActiveAction
     {
         get => this._actions.Any(action => action.IsActive);
@@ -24,6 +25,7 @@ public class Soldier : MonoBehaviour
     public int GetActionCost(string actionName) => this._actions.First(action => action.ToString() == actionName).ActionCost;
     public int GetActionEffectiveDistance(string actionName) => this._actions.First(action => action.ToString() == actionName).MaxEffectiveDistance;
     public int GetActionPoints() => this._actionPoints;
+    public void ResetActionPoints() => this._actionPoints = _MAX_ACTION_POINTS;
 
     public void DoAction(Action OnActionComplete, Vector3 worldPosition, string actionName)
     {

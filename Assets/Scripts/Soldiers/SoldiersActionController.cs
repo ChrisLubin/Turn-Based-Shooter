@@ -27,6 +27,7 @@ public class SoldiersActionController : MonoBehaviour
     private void Start()
     {
         GlobalMouse.Instance.OnLayerLeftClick += this.OnLayerLeftClick;
+        TurnController.Instance.OnTurnEnd += this.OnTurnEnd;
         this._selectedSoldier.SetVisual(true);
         this._visualController.OnButtonClick += this.OnActionChange;
         this._visualController.UpdateSoldierActionButtons(this._selectedSoldier, out string firstActionName);
@@ -38,11 +39,18 @@ public class SoldiersActionController : MonoBehaviour
     public string GetSelectedActionName() => this._selectedActionName;
     public int GetSelectedActionEffectiveDistance() => this._selectedSoldier.GetActionEffectiveDistance(this._selectedActionName);
 
+    public void OnTurnEnd()
+    {
+        this._visualController.UpdateButtonsVisual(this._selectedSoldier.GetActionPoints());
+        this._visualController.UpdateActionPoints(this._selectedSoldier.GetActionPoints());
+    }
+
     private void OnActionDone()
     {
         this.IsBusy = false;
         this._visualController.UpdateButtonsVisual(this._selectedSoldier.GetActionPoints());
         this.OnActionCompleted?.Invoke();
+        TurnController.Instance.SetShowEndTurnButton(true);
     }
 
     public void DoAction(Vector3 to)
@@ -65,6 +73,7 @@ public class SoldiersActionController : MonoBehaviour
         this._visualController.UpdateActionPoints(this._selectedSoldier.GetActionPoints());
         this._visualController.UpdateButtonsVisual(soldierActionPoints);
         this._visualController.UpdateButtonsVisual(this._selectedSoldier.GetActionPoints());
+        TurnController.Instance.SetShowEndTurnButton(false);
     }
 
     private void OnActionChange(string actionName)
