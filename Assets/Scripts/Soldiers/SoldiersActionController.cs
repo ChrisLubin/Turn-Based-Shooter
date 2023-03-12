@@ -40,9 +40,11 @@ public class SoldiersActionController : MonoBehaviour
     public string GetSelectedActionName() => this._selectedActionName;
     public int GetSelectedActionEffectiveDistance() => this._selectedSoldier.GetActionEffectiveDistance(this._selectedActionName);
 
-    public void OnTurnEnd()
+    public void OnTurnEnd(bool isPlayerTurn)
     {
-        this._visualController.SetButtonsVisual(this._selectedSoldier.GetActionPoints() != 0);
+        this._selectedSoldier.SetVisual(isPlayerTurn);
+        this._visualController.SetActionPointsVisual(isPlayerTurn);
+        this._visualController.SetButtonsVisual(isPlayerTurn && this._selectedSoldier.GetActionPoints() != 0);
         this._visualController.UpdateActionPoints(this._selectedSoldier.GetActionPoints());
     }
 
@@ -92,6 +94,10 @@ public class SoldiersActionController : MonoBehaviour
         {
             return;
         }
+        if (!TurnController.Instance.GetIsPlayerTurn())
+        {
+            return;
+        }
 
         bool gotSoldier = gameObject.TryGetComponent<Soldier>(out Soldier soldier);
 
@@ -115,6 +121,10 @@ public class SoldiersActionController : MonoBehaviour
             return;
         }
         if (this.IsBusy)
+        {
+            return;
+        }
+        if (soldier.GetIsEnemy())
         {
             return;
         }

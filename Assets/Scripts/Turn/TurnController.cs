@@ -8,7 +8,8 @@ public class TurnController : MonoBehaviour
     private int _currentTurn;
     private TurnVisualController _visualController;
     private Button _endTurnButton;
-    public Action OnTurnEnd;
+    public Action<bool> OnTurnEnd;
+    private bool _isPlayerTurn = true;
 
     private void Awake()
     {
@@ -28,15 +29,22 @@ public class TurnController : MonoBehaviour
     {
         this._currentTurn = 1;
         this.UpdateCurrentTurn();
-        this._endTurnButton.onClick.AddListener(this.OnEndTurnButtonClicked);
+        this._endTurnButton.onClick.AddListener(this.TriggerNextTurn);
     }
 
     public void SetShowEndTurnButton(bool showButton) => this._visualController.SetShowEndTurnButton(showButton);
-    private void UpdateCurrentTurn() => this._visualController.SetCurrentTurn(this._currentTurn);
+    public bool GetIsPlayerTurn() => this._isPlayerTurn;
 
-    private void OnEndTurnButtonClicked()
+    private void UpdateCurrentTurn()
+    {
+        this._visualController.SetCurrentTurn(this._currentTurn, this._isPlayerTurn);
+        this._visualController.SetShowEndTurnButton(this._isPlayerTurn);
+    }
+
+    public void TriggerNextTurn()
     {
         this._currentTurn++;
+        this._isPlayerTurn = !this._isPlayerTurn;
         this.UpdateCurrentTurn();
 
         Soldier[] soldiers = GameObject.FindObjectsOfType<Soldier>();
@@ -46,6 +54,6 @@ public class TurnController : MonoBehaviour
             soldier.ResetActionPoints();
         }
 
-        this.OnTurnEnd?.Invoke();
+        this.OnTurnEnd?.Invoke(this._isPlayerTurn);
     }
 }

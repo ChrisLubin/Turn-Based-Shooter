@@ -4,15 +4,20 @@ using UnityEngine.UI;
 
 public class TurnVisualController : MonoBehaviour
 {
-    private TextMeshProUGUI _currentTurnText;
+    [SerializeField] private TextMeshProUGUI _currentTurnCountText;
+    [SerializeField] private TextMeshProUGUI _whoseTurnText;
     private Button _endTurnButton;
 
     private void Awake()
     {
-        this._currentTurnText = GetComponentInChildren<TextMeshProUGUI>();
         this._endTurnButton = GetComponentInChildren<Button>();
     }
 
-    public void SetCurrentTurn(int turnCount) => this._currentTurnText.text = $"TURN {turnCount}";
     public void SetShowEndTurnButton(bool showButton) => this._endTurnButton.gameObject.SetActive(showButton);
+
+    public void SetCurrentTurn(int turnCount, bool isPlayerTurn)
+    {
+        this._currentTurnCountText.text = $"TURN {turnCount}";
+        this._whoseTurnText.text = $"({(isPlayerTurn ? "Your" : "Enemy")} Turn)";
+    }
 }

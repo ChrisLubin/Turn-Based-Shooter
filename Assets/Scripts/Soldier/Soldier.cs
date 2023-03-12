@@ -5,6 +5,7 @@ using UnityEngine;
 public class Soldier : MonoBehaviour
 {
     private const int _MAX_ACTION_POINTS = 2;
+    [SerializeField] private bool _isEnemy;
     private SoldierSelectedVisualController _visualController;
     private BaseAction[] _actions;
     private int _actionPoints = _MAX_ACTION_POINTS;
@@ -26,6 +27,7 @@ public class Soldier : MonoBehaviour
     public int GetActionEffectiveDistance(string actionName) => this._actions.First(action => action.ToString() == actionName).MaxEffectiveDistance;
     public int GetActionPoints() => this._actionPoints;
     public void ResetActionPoints() => this._actionPoints = _MAX_ACTION_POINTS;
+    public bool GetIsEnemy() => this._isEnemy;
 
     public void DoAction(Action OnActionComplete, Vector3 worldPosition, string actionName)
     {

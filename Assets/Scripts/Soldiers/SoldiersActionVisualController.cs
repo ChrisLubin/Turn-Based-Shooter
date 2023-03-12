@@ -12,10 +12,9 @@ public class SoldiersActionVisualController : MonoBehaviour
     public event Action<string> OnButtonClick;
     private List<ActionButtonController> _actionButtons = new();
 
-    private void HideButtons() => this._actionButtons.ToList().ForEach(button => button.gameObject.SetActive(false));
-    private void ShowButtons() => this._actionButtons.ToList().ForEach(button => button.gameObject.SetActive(true));
     public void UpdateActionPoints(int newActionPoints) => this._actionPointsText.text = $"Action Points: {newActionPoints}";
-    public void SetButtonsVisual(bool showButtons) => (showButtons ? (Action)this.ShowButtons : this.HideButtons)();
+    public void SetButtonsVisual(bool showButtons) => this._actionButtons.ToList().ForEach(button => button.gameObject.SetActive(showButtons));
+    public void SetActionPointsVisual(bool showActionPoints) => this._actionPointsText.gameObject.SetActive(showActionPoints);
 
     public void UpdateSoldierActionButtons(Soldier soldier, out string firstActionName)
     {

@@ -18,7 +18,7 @@ public class LevelGrid : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            this._gridController = new GridController(4, 4, 2f);
+            this._gridController = new GridController(7, 7, 2f);
             return;
         }
 
@@ -70,10 +70,24 @@ public class LevelGrid : MonoBehaviour
 
     private bool HasSoldier(GridTile gridTile) => gridTile.HasSoldier();
     private void ClearSoldierAtGridTile(GridTile gridTile) => gridTile.RemoveSoldier();
-    private void OnTurnEnd() => this.UpdateActiveGridTiles();
+
+    private void OnTurnEnd(bool isPlayerTurn)
+    {
+        if (!isPlayerTurn)
+        {
+            this.ClearAllActiveGridTiles();
+            return;
+        }
+
+        this.UpdateActiveGridTiles();
+    }
 
     private void OnLayerLeftClick(int layerMaskId, GameObject gameObject)
     {
+        if (!TurnController.Instance.GetIsPlayerTurn())
+        {
+            return;
+        }
         if (SoldiersActionController.Instance.IsBusy)
         {
             return;
