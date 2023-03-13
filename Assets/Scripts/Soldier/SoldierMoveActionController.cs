@@ -4,12 +4,11 @@ using UnityEngine;
 public class SoldierMoveActionController : BaseAction
 {
     private Vector3 _targetPosition;
-    private Animator _soldierAnimator;
-    private const string _IS_WALKING_ANIMATION_NAME = "IsWalking";
+    public Action OnStartMoving;
+    public Action OnStopMoving;
 
     private void Awake()
     {
-        this._soldierAnimator = GetComponentInChildren<Animator>();
         this.MaxEffectiveDistance = 2;
         this.ActionCost = 1;
         this.TargetType = Constants.SoldierActionTargetTypes.EmptyTile;
@@ -35,6 +34,7 @@ public class SoldierMoveActionController : BaseAction
 
     protected override void DoAction(Vector3 targetPosition)
     {
+        this.OnStartMoving?.Invoke();
         this.SetTargetPosition(targetPosition);
     }
 
@@ -42,12 +42,11 @@ public class SoldierMoveActionController : BaseAction
     {
         if (Vector3.Distance(transform.position, this._targetPosition) < 0.05f)
         {
-            this._soldierAnimator.SetBool(_IS_WALKING_ANIMATION_NAME, false);
+            this.OnStopMoving?.Invoke();
             this.ActionComplete();
             return;
         }
 
-        this._soldierAnimator.SetBool(_IS_WALKING_ANIMATION_NAME, true);
         float moveSpeed = 4f;
         float rotateSpeed = 10f;
         Vector3 moveDirection = (_targetPosition - transform.position).normalized;
