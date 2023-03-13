@@ -43,8 +43,7 @@ public class SoldierMoveActionController : BaseAction
         if (Vector3.Distance(transform.position, this._targetPosition) < 0.05f)
         {
             this._soldierAnimator.SetBool(_IS_WALKING_ANIMATION_NAME, false);
-            this.IsActive = false;
-            this._OnActionComplete();
+            this.ActionComplete();
             return;
         }
 

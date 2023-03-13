@@ -18,5 +18,11 @@ public abstract class BaseAction : MonoBehaviour
 
     protected abstract void DoAction(Vector3 worldPosition);
 
+    protected void ActionComplete()
+    {
+        this.IsActive = false;
+        this._OnActionComplete();
+    }
+
     public abstract override string ToString();
 }

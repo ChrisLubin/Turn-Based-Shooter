@@ -5,8 +5,10 @@ using UnityEngine;
 public class SoldierShootActionController : BaseAction
 {
     private State _state;
+    private Vector3 _targetDirection;
     private enum State
     {
+        None,
         Aiming,
         Shooting,
         Cooloff,
@@ -22,11 +24,22 @@ public class SoldierShootActionController : BaseAction
 
     private void Update()
     {
-        // Debug.Log($"{this._state}");
+        if (!this.IsActive)
+        {
+            return;
+        }
+
+        if (this._state == State.Aiming)
+        {
+            Vector3 aimDirection = (this._targetDirection - transform.position).normalized;
+            float rotateSpeed = 10f;
+            transform.forward = Vector3.Lerp(transform.forward, aimDirection, Time.deltaTime * rotateSpeed);
+        }
     }
 
     protected async override void DoAction(Vector3 worldPosition)
     {
+        this._targetDirection = worldPosition;
         this._state = State.Aiming;
         // Aiming
         Debug.Log($"Aiming");
@@ -43,7 +56,7 @@ public class SoldierShootActionController : BaseAction
         Debug.Log($"Cooloff");
         await Task.Delay(TimeSpan.FromSeconds(.5));
 
-        this._OnActionComplete();
+        this.ActionComplete();
     }
 
     public override string ToString() => Constants.SoldierActionNames.Shoot;

@@ -21,9 +21,8 @@ public class SoldierSpinActionController : BaseAction
         }
         if (this._totalSpin >= 360f)
         {
-            this.IsActive = false;
             transform.eulerAngles = new Vector3(transform.eulerAngles.x, this._originalRotationAngle, transform.eulerAngles.z);
-            this._OnActionComplete();
+            this.ActionComplete();
             return;
         }
 
