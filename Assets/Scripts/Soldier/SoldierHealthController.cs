@@ -21,5 +21,4 @@ public class SoldierHealthController : MonoBehaviour
             this.Die();
         }
     }
-
 }

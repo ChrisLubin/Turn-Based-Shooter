@@ -70,7 +70,7 @@ public class LevelGrid : MonoBehaviour
     }
 
     private void ClearSoldierAtGridTile(GridTile gridTile) => gridTile.RemoveSoldier();
-    private void OnShoot(Vector3 positionToShoot, int damage) => this._gridController.GetGridTile(positionToShoot).GetSoldier().TakeDamage(damage);
+    private void OnShoot(Vector3 positionToShoot, int damage) => this._gridController.GetGridTile(positionToShoot).GetSoldier()?.TakeDamage(damage);
 
     private void OnTurnEnd(bool isPlayerTurn)
     {

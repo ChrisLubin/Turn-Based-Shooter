@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class BulletProjectile : MonoBehaviour
@@ -5,6 +6,7 @@ public class BulletProjectile : MonoBehaviour
     private Vector3 _targetPosition;
     private TrailRenderer _trailRenderer;
     [SerializeField] private Transform _bulletHitVfxPrefab;
+    public Action OnHit;
 
     private void Awake()
     {
@@ -21,6 +23,7 @@ public class BulletProjectile : MonoBehaviour
 
         if (distanceBeforeMoving < distanceAfterMoving)
         {
+            this.OnHit();
             transform.position = this._targetPosition;
             this._trailRenderer.transform.parent = null;
             Destroy(this.gameObject);
@@ -28,5 +31,9 @@ public class BulletProjectile : MonoBehaviour
         }
     }
 
-    public void SetTargetPosition(Vector3 targetPosition) => this._targetPosition = new Vector3(targetPosition.x, transform.position.y, targetPosition.z);
+    public void SendBullet(Vector3 targetPosition, Action OnHit)
+    {
+        this._targetPosition = new Vector3(targetPosition.x, transform.position.y, targetPosition.z);
+        this.OnHit = OnHit;
+    }
 }
