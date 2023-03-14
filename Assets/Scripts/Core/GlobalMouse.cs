@@ -32,6 +32,12 @@ public class GlobalMouse : MonoBehaviour
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             Physics.Raycast(ray, out RaycastHit raycastHit, float.MaxValue);
+
+            if (raycastHit.collider == null)
+            {
+                return;
+            }
+
             GameObject gameObject = raycastHit.collider.gameObject;
             int layerMaskId = gameObject.layer;
             if (layerMaskId != (int)Constants.LayerMaskIds.Default && layerMaskId != (int)Constants.LayerMaskIds.IgnoreRaycast)
