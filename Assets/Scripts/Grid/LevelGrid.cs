@@ -98,14 +98,26 @@ public class LevelGrid : MonoBehaviour
             // Hovering over UI element
             return;
         }
-        if (layerMaskId != (int)Constants.LayerMaskIds.MainFloor)
-        {
-            return;
-        }
 
         Vector3 selectedSoldierPosition = SoldiersActionController.Instance.GetSelectedSolder().transform.position;
         GridPosition from = this._gridController.GetGridPosition(selectedSoldierPosition);
-        GridPosition to = this._gridController.GetGridPosition(GlobalMouse.Instance.GetFloorPosition());
+        GridPosition to = new();
+
+        if (layerMaskId == (int)Constants.LayerMaskIds.MainFloor)
+        {
+            to = this._gridController.GetGridPosition(GlobalMouse.Instance.GetFloorPosition());
+        }
+        else if (layerMaskId == (int)Constants.LayerMaskIds.Soldier)
+        {
+            bool gotSoldier = gameObject.TryGetComponent<Soldier>(out Soldier soldier);
+            if (!gotSoldier)
+            {
+                return;
+            }
+
+            to = this._gridController.GetGridPosition(soldier.transform.position);
+        }
+
         if (!this.CanDoActionOnGridPosition(from, to))
         {
             return;

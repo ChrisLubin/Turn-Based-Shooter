@@ -102,18 +102,12 @@ public class SoldiersActionController : MonoBehaviour
         }
 
         bool gotSoldier = gameObject.TryGetComponent<Soldier>(out Soldier soldier);
-
-        if (gotSoldier && this._selectedSoldier == soldier && this._selectedSoldier.GetActionEffectiveDistance(this._selectedActionName) == 0)
+        if (!gotSoldier)
         {
-            // Action can only be done on soldier's current position
-            this.DoAction(soldier.transform.position);
             return;
         }
 
-        if (gotSoldier)
-        {
-            HandleSoldierSelection(soldier);
-        }
+        HandleSoldierSelection(soldier);
     }
 
     private void HandleSoldierSelection(Soldier newSoldier)

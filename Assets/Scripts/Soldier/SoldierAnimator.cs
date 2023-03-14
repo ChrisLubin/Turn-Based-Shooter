@@ -22,6 +22,7 @@ public class SoldierAnimator : MonoBehaviour
 
     private void OnStartMoving() => this._animator.SetBool(_IS_WALKING_ANIMATION_NAME, true);
     private void OnStopMoving() => this._animator.SetBool(_IS_WALKING_ANIMATION_NAME, false);
+
     private void OnShoot(Vector3 targetPosition, int _)
     {
         this._animator.SetTrigger(_SHOOT_ANIMATION_NAME);
