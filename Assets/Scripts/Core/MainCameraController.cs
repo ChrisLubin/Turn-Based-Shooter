@@ -1,7 +1,7 @@
 using Cinemachine;
 using UnityEngine;
 
-public class CameraController : MonoBehaviour
+public class MainCameraController : MonoBehaviour
 {
     private CinemachineTransposer _cinemachineTransposer;
     private Vector3 _targetFollowOffset;
@@ -37,6 +37,11 @@ public class CameraController : MonoBehaviour
 
     private void Update()
     {
+        if (ActionCameraController.Instance.IsActive())
+        {
+            return;
+        }
+
         this.HandleMovement();
         this.HandlePan();
         this.HandleTilt();

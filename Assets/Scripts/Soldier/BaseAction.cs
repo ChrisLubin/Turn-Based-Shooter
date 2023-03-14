@@ -11,6 +11,16 @@ public abstract class BaseAction : MonoBehaviour
 
     public void DoAction(Action OnActionComplete, Vector3 worldPosition)
     {
+        if (this.TargetType == Constants.SoldierActionTargetTypes.Enemy)
+        {
+            Vector3 soldierHeight = Vector3.up * 1.7f;
+            Vector3 aimDirection = (worldPosition - transform.position).normalized;
+            float shoulderOffsetAmount = 0.5f;
+            Vector3 shoulderOffset = Quaternion.Euler(0, 90, 0) * aimDirection * shoulderOffsetAmount;
+            Vector3 from = transform.position + soldierHeight + shoulderOffset + (aimDirection * -1);
+            ActionCameraController.Instance.DoShot(from, worldPosition + soldierHeight);
+        }
+
         this._OnActionComplete = OnActionComplete;
         this.IsActive = true;
         this.DoAction(worldPosition);
@@ -20,6 +30,11 @@ public abstract class BaseAction : MonoBehaviour
 
     protected void ActionComplete()
     {
+        if (this.TargetType == Constants.SoldierActionTargetTypes.Enemy)
+        {
+            ActionCameraController.Instance.StopShot();
+        }
+
         this.IsActive = false;
         this._OnActionComplete();
     }
