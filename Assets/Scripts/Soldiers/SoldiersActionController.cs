@@ -30,7 +30,7 @@ public class SoldiersActionController : MonoBehaviour
     {
         GlobalMouse.Instance.OnLayerLeftClick += this.OnLayerLeftClick;
         TurnController.Instance.OnTurnEnd += this.OnTurnEnd;
-        this._selectedSoldier.OnShoot += (Vector3 positionToShoot, int damage) => this.OnShoot?.Invoke(positionToShoot, damage);
+        this._selectedSoldier.OnShoot += this.OnShoot;
         this._selectedSoldier.SetVisual(true);
         this._visualController.OnButtonClick += this.OnActionChange;
         this._visualController.UpdateSoldierActionButtons(this._selectedSoldier, out string firstActionName);

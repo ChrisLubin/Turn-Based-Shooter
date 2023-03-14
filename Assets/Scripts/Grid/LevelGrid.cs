@@ -9,7 +9,7 @@ public class LevelGrid : MonoBehaviour
     [SerializeField] private Transform _gridTilePrefab;
     private GridController _gridController;
     public static LevelGrid Instance { get; private set; }
-    private Soldier[] _soldiers;
+    private List<Soldier> _soldiers;
     private IDictionary<Soldier, GridTile> _soldierToGridTileMap = new Dictionary<Soldier, GridTile>();
     private GridTile[] _gridTilesWithActiveVisual = Array.Empty<GridTile>();
 
@@ -19,6 +19,7 @@ public class LevelGrid : MonoBehaviour
         {
             Instance = this;
             this._gridController = new GridController(7, 7, 2f);
+            SoldiersActionController.Instance.OnShoot += this.OnShoot;
             return;
         }
 
@@ -32,10 +33,9 @@ public class LevelGrid : MonoBehaviour
         SoldiersActionController.Instance.OnSelectedActionChange += this.UpdateActiveGridTiles;
         SoldiersActionController.Instance.OnActionCompleted += this.UpdateActiveGridTiles;
         SoldiersActionController.Instance.OnSelectedSoldierHasNoActionPoints += this.ClearAllActiveGridTiles;
-        SoldiersActionController.Instance.OnShoot += this.OnShoot;
         TurnController.Instance.OnTurnEnd += this.OnTurnEnd;
         this._gridController.CreateGridTiles(this.transform, _gridTilePrefab);
-        this._soldiers = GameObject.FindObjectsOfType<Soldier>();
+        this._soldiers = GameObject.FindObjectsOfType<Soldier>().ToList();
         foreach (Soldier soldier in this._soldiers)
         {
             OnSoldierSpawn(soldier);
@@ -51,17 +51,17 @@ public class LevelGrid : MonoBehaviour
             GridTile to = this._gridController.GetGridTile(soldier.transform.position);
             if (successfullyGotFrom && from != to)
             {
-                ClearSoldierAtGridTile(from);
-                SetSoldierAtGridTile(to, soldier);
-                UpdateActiveGridTiles();
+                this.ClearSoldierAtGridTile(from);
+                this.SetSoldierAtGridTile(to, soldier);
+                this.UpdateActiveGridTiles();
 
                 foreach (Soldier innerSoldier in this._soldiers)
                 {
                     bool anotherSoldierLeftMyGridPosition = this._gridController.GetGridTile(innerSoldier.transform.position) == from;
                     if (anotherSoldierLeftMyGridPosition)
                     {
-                        SetSoldierAtGridTile(from, innerSoldier);
-                        UpdateActiveGridTiles();
+                        this.SetSoldierAtGridTile(from, innerSoldier);
+                        this.UpdateActiveGridTiles();
                         break;
                     }
                 }
@@ -170,8 +170,17 @@ public class LevelGrid : MonoBehaviour
 
     private void OnSoldierSpawn(Soldier soldier)
     {
+        soldier.OnDeath += this.OnSoldierDeath;
         this._soldierToGridTileMap.Add(soldier, this._gridController.GetGridTile(soldier.transform.position));
         SetSoldierAtGridTile(this._gridController.GetGridTile(soldier.transform.position), soldier);
+    }
+
+    private void OnSoldierDeath(Soldier soldier)
+    {
+        soldier.OnDeath -= this.OnSoldierDeath;
+        GridTile gridTile = this._gridController.GetGridTile(soldier.transform.position);
+        this.ClearSoldierAtGridTile(gridTile);
+        this._soldiers.Remove(soldier);
     }
 
     private void SetGridTilesActive(GridTile[] gridTiles)
