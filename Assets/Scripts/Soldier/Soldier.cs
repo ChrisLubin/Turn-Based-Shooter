@@ -17,6 +17,7 @@ public class Soldier : MonoBehaviour
     }
     public Action<Vector3, int> OnShoot;
     public Action<Soldier> OnDeath;
+    public Action<int> OnActionPointsChange;
 
     private void Awake()
     {
@@ -34,9 +35,14 @@ public class Soldier : MonoBehaviour
     public int GetActionEffectiveDistance(string actionName) => this._actions.First(action => action.ToString() == actionName).MaxEffectiveDistance;
     public string GetActionTargetType(string actionName) => this._actions.First(action => action.ToString() == actionName).TargetType;
     public int GetActionPoints() => this._actionPoints;
-    public void ResetActionPoints() => this._actionPoints = _MAX_ACTION_POINTS;
     public bool GetIsEnemy() => this._isEnemy;
     public void TakeDamage(int damageAmount) => this._healthController.TakeDamage(damageAmount);
+
+    public void ResetActionPoints()
+    {
+        this._actionPoints = _MAX_ACTION_POINTS;
+        this.OnActionPointsChange?.Invoke(this._actionPoints);
+    }
 
     private void DestroySoldier()
     {
@@ -54,5 +60,6 @@ public class Soldier : MonoBehaviour
 
         action.DoAction(OnActionComplete, worldPosition);
         this._actionPoints -= action.ActionCost;
+        this.OnActionPointsChange?.Invoke(this._actionPoints);
     }
 }
