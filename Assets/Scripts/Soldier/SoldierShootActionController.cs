@@ -22,7 +22,7 @@ public class SoldierShootActionController : BaseAction
 
     private void Awake()
     {
-        this.MaxEffectiveDistance = 5;
+        this.MaxEffectiveDistance = 2;
         this.ActionCost = 1;
         this.TargetType = Constants.SoldierActionTargetTypes.Enemy;
     }
