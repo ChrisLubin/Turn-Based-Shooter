@@ -13,6 +13,7 @@ public static class Constants
         White,
         Blue,
         Red,
+        RedSoft,
         Yellow
     }
 

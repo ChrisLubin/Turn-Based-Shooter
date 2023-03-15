@@ -11,7 +11,7 @@ public class LevelGrid : MonoBehaviour
     public static LevelGrid Instance { get; private set; }
     private List<Soldier> _soldiers;
     private IDictionary<Soldier, GridTile> _soldierToGridTileMap = new Dictionary<Soldier, GridTile>();
-    private GridTile[] _gridTilesWithActiveVisual = Array.Empty<GridTile>();
+    private List<GridTile> _gridTilesWithActiveVisual = new();
 
     private void Awake()
     {
@@ -183,13 +183,13 @@ public class LevelGrid : MonoBehaviour
         this._soldiers.Remove(soldier);
     }
 
-    private void SetGridTilesActive(GridTile[] gridTiles, Constants.GridTileColor color = Constants.GridTileColor.White)
+    private void AddGridTilesActive(GridTile[] gridTiles, Constants.GridTileColor color = Constants.GridTileColor.White)
     {
         foreach (GridTile gridTile in gridTiles)
         {
             gridTile.SetVisual(true, color);
         }
-        this._gridTilesWithActiveVisual = gridTiles;
+        this._gridTilesWithActiveVisual.AddRange(gridTiles);
     }
 
     private void ClearAllActiveGridTiles()
@@ -198,7 +198,7 @@ public class LevelGrid : MonoBehaviour
         {
             gridTile.SetVisual(false);
         }
-        this._gridTilesWithActiveVisual = Array.Empty<GridTile>();
+        this._gridTilesWithActiveVisual.Clear();
     }
 
     private void UpdateActiveGridTiles()
@@ -214,7 +214,6 @@ public class LevelGrid : MonoBehaviour
 
         if (selectedSoldier.GetActionPoints() == 0)
         {
-            SetGridTilesActive(Array.Empty<GridTile>());
             return;
         }
 
@@ -227,7 +226,9 @@ public class LevelGrid : MonoBehaviour
             case Constants.SoldierActionTargetTypes.Enemy:
                 color = Constants.GridTileColor.Red;
                 GridTile[] circularSurroundingGridTiles = this._gridController.GetSurroundingGridTiles(selectedSoldierGridTile, selectedActionMaxEffectiveDistance, true);
+                GridTile[] nonValidGridTiles = circularSurroundingGridTiles.Where(tile => !tile.HasEnemySoldier()).ToArray();
                 validGridTiles = circularSurroundingGridTiles.Where(tile => tile.HasEnemySoldier()).ToArray();
+                AddGridTilesActive(nonValidGridTiles, Constants.GridTileColor.RedSoft);
                 break;
             case Constants.SoldierActionTargetTypes.EmptyTile:
                 color = Constants.GridTileColor.White;
@@ -235,6 +236,6 @@ public class LevelGrid : MonoBehaviour
                 break;
         }
 
-        SetGridTilesActive(validGridTiles, color);
+        AddGridTilesActive(validGridTiles, color);
     }
 }
