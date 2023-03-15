@@ -183,11 +183,11 @@ public class LevelGrid : MonoBehaviour
         this._soldiers.Remove(soldier);
     }
 
-    private void SetGridTilesActive(GridTile[] gridTiles)
+    private void SetGridTilesActive(GridTile[] gridTiles, Constants.GridTileColor color = Constants.GridTileColor.White)
     {
         foreach (GridTile gridTile in gridTiles)
         {
-            gridTile.SetVisual(true);
+            gridTile.SetVisual(true, color);
         }
         this._gridTilesWithActiveVisual = gridTiles;
     }
@@ -210,6 +210,7 @@ public class LevelGrid : MonoBehaviour
         GridTile[] squareSurroundingGridTiles = this._gridController.GetSurroundingGridTiles(selectedSoldierGridTile, selectedActionMaxEffectiveDistance);
         GridTile[] validGridTiles = Array.Empty<GridTile>();
         ClearAllActiveGridTiles();
+        Constants.GridTileColor color = Constants.GridTileColor.White;
 
         if (selectedSoldier.GetActionPoints() == 0)
         {
@@ -220,17 +221,20 @@ public class LevelGrid : MonoBehaviour
         switch (selectedActionTargetType)
         {
             case Constants.SoldierActionTargetTypes.Self:
+                color = Constants.GridTileColor.Blue;
                 validGridTiles = new[] { selectedSoldierGridTile };
                 break;
             case Constants.SoldierActionTargetTypes.Enemy:
+                color = Constants.GridTileColor.Red;
                 GridTile[] circularSurroundingGridTiles = this._gridController.GetSurroundingGridTiles(selectedSoldierGridTile, selectedActionMaxEffectiveDistance, true);
                 validGridTiles = circularSurroundingGridTiles.Where(tile => tile.HasEnemySoldier()).ToArray();
                 break;
             case Constants.SoldierActionTargetTypes.EmptyTile:
+                color = Constants.GridTileColor.White;
                 validGridTiles = squareSurroundingGridTiles.Where(tile => !tile.HasSoldier()).ToArray();
                 break;
         }
 
-        SetGridTilesActive(validGridTiles);
+        SetGridTilesActive(validGridTiles, color);
     }
 }

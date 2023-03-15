@@ -8,6 +8,14 @@ public static class Constants
         Soldier = 1 << 8,
     }
 
+    public enum GridTileColor
+    {
+        White,
+        Blue,
+        Red,
+        Yellow
+    }
+
     public static class SoldierActionNames
     {
         public const string Move = "MOVE";

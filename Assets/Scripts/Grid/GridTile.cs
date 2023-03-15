@@ -28,7 +28,7 @@ public class GridTile : MonoBehaviour
     public void SetSoldier(Soldier soldier) => this._soldierController.SetSoldier(soldier);
     public GridPosition GetGridPosition() => this._gridPosition;
     public void SetGridPosition(GridPosition gridPosition) => this._gridPosition = gridPosition;
-    public void SetVisual(bool showVisual) => this._visualController.SetVisual(showVisual);
+    public void SetVisual(bool showVisual, Constants.GridTileColor color = Constants.GridTileColor.White) => this._visualController.SetVisual(showVisual, color);
     public override string ToString() => $"{this._gridPosition}\n{this._soldierController}";
 
     public static bool operator ==(GridTile a, GridTile b)

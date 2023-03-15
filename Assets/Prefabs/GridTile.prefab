@@ -316,6 +316,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9245e2ae90148f64391dc45affeed455, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _gridTileMaterials:
+  - color: 0
+    material: {fileID: 2100000, guid: 91a62475b79e9a84e8f8abc1bee6be1a, type: 2}
+  - color: 1
+    material: {fileID: 2100000, guid: b7340f0c5c11be84db5d074d74045a85, type: 2}
+  - color: 2
+    material: {fileID: 2100000, guid: 22bb90003336c864db7f78b61879b53d, type: 2}
+  - color: 3
+    material: {fileID: 2100000, guid: 148825eaa9942c54bbe2e15fe6247211, type: 2}
 --- !u!1 &8976349983122662084
 GameObject:
   m_ObjectHideFlags: 0
