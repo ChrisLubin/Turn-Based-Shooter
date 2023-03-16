@@ -8,7 +8,6 @@ public class SoldiersActionController : MonoBehaviour
     public event Action OnActionCompleted;
     public event Action OnSelectedActionChange;
     public event Action OnSelectedSoldierHasNoActionPoints;
-    public event Action<Vector3, int> OnShoot;
     public bool IsBusy { get; private set; }
     private SoldiersActionVisualController _visualController;
     private string _selectedActionName;
@@ -30,7 +29,6 @@ public class SoldiersActionController : MonoBehaviour
     {
         GlobalMouse.Instance.OnLayerLeftClick += this.OnLayerLeftClick;
         TurnController.Instance.OnTurnEnd += this.OnTurnEnd;
-        this._selectedSoldier.OnShoot += this.OnShoot;
         this._selectedSoldier.SetVisual(true);
         this._visualController.OnButtonClick += this.OnActionChange;
         this._visualController.UpdateSoldierActionButtons(this._selectedSoldier, out string firstActionName);
@@ -39,8 +37,9 @@ public class SoldiersActionController : MonoBehaviour
     }
 
     public Soldier GetSelectedSolder() => this._selectedSoldier;
+    public string GetSelectedActionName() => this._selectedActionName;
     public int GetSelectedActionEffectiveDistance() => this._selectedSoldier.GetActionEffectiveDistance(this._selectedActionName);
-    public string GetSelectedActionTargetType() => this._selectedSoldier.GetActionTargetType(this._selectedActionName);
+    public Constants.SoldierActionTargetTypes GetSelectedActionTargetType() => this._selectedSoldier.GetActionTargetType(this._selectedActionName);
 
     public void OnTurnEnd(bool isPlayerTurn)
     {
@@ -125,11 +124,9 @@ public class SoldiersActionController : MonoBehaviour
             return;
         }
 
-        this._selectedSoldier.OnShoot -= this.OnShoot;
         this._selectedSoldier.SetVisual(false);
         this._selectedSoldier = newSoldier;
         newSoldier.SetVisual(true);
-        newSoldier.OnShoot += this.OnShoot;
         this._visualController.UpdateSoldierActionButtons(newSoldier, out string firstActionName);
         this._visualController.UpdateActionPoints(newSoldier.GetActionPoints());
         this._visualController.SetButtonsVisual(newSoldier.GetActionPoints() != 0);

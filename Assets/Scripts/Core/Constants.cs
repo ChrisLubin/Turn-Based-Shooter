@@ -24,10 +24,10 @@ public static class Constants
         public const string Shoot = "SHOOT";
     }
 
-    public static class SoldierActionTargetTypes
+    public enum SoldierActionTargetTypes
     {
-        public const string Self = "SELF";
-        public const string Enemy = "ENEMY";
-        public const string EmptyTile = "EMPTY_TILE";
+        Self,
+        Enemy,
+        EmptyTile,
     }
 }

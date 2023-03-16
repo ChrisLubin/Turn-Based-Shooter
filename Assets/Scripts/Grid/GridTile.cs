@@ -22,6 +22,7 @@ public class GridTile : MonoBehaviour
     }
 
     public bool HasSoldier() => this._soldierController.HasSoldier();
+    public bool HasFriendlySoldier() => this._soldierController.HasFriendlySoldier();
     public bool HasEnemySoldier() => this._soldierController.HasEnemySoldier();
     public void RemoveSoldier() => this._soldierController.RemoveSoldier();
     public Soldier GetSoldier() => this._soldierController.GetSoldier();

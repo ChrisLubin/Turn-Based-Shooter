@@ -34,11 +34,12 @@ public class Soldier : MonoBehaviour
     public string[] GetActionNames() => this._actions.Select(action => action.ToString()).ToArray();
     public int GetActionCost(string actionName) => this._actions.First(action => action.ToString() == actionName).ActionCost;
     public int GetActionEffectiveDistance(string actionName) => this._actions.First(action => action.ToString() == actionName).MaxEffectiveDistance;
-    public string GetActionTargetType(string actionName) => this._actions.First(action => action.ToString() == actionName).TargetType;
+    public Constants.SoldierActionTargetTypes GetActionTargetType(string actionName) => this._actions.First(action => action.ToString() == actionName).TargetType;
     public int GetActionPoints() => this._actionPoints;
     public bool GetIsEnemy() => this._isEnemy;
     public void TakeDamage(int damageAmount) => this._healthController.TakeDamage(damageAmount);
     public bool CanDoAction(string actionName) => this._actionPoints >= this.GetActionCost(actionName);
+    public bool CanDoAnyAction() => this._actions.Any(action => this._actionPoints >= action.ActionCost);
 
     public void ResetActionPoints()
     {

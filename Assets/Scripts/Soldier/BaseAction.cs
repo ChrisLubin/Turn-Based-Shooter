@@ -7,7 +7,10 @@ public abstract class BaseAction : MonoBehaviour
     public bool IsActive { get; protected set; }
     public int MaxEffectiveDistance { get; protected set; }
     public int ActionCost { get; protected set; }
-    public string TargetType { get; protected set; }
+    public Constants.SoldierActionTargetTypes TargetType { get; protected set; }
+
+    public abstract override string ToString();
+    protected abstract void DoAction(Vector3 worldPosition);
 
     public void DoAction(Action OnActionComplete, Vector3 worldPosition)
     {
@@ -26,8 +29,6 @@ public abstract class BaseAction : MonoBehaviour
         this.DoAction(worldPosition);
     }
 
-    protected abstract void DoAction(Vector3 worldPosition);
-
     protected void ActionComplete()
     {
         if (this.TargetType == Constants.SoldierActionTargetTypes.Enemy)
@@ -38,6 +39,4 @@ public abstract class BaseAction : MonoBehaviour
         this.IsActive = false;
         this._OnActionComplete();
     }
-
-    public abstract override string ToString();
 }

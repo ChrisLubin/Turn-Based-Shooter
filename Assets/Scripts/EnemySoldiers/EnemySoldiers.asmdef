@@ -1,0 +1,19 @@
+{
+    "name": "EnemySoldiers",
+    "rootNamespace": "",
+    "references": [
+        "GUID:0368d7d40a52495409058d201de2a292",
+        "GUID:8258d21857b566f408311ba95cef26b0",
+        "GUID:30e5c3e657659a84f81f58307808c387",
+        "GUID:d81cca885e2225c4d9a3cb5b1d4f9bc1"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
