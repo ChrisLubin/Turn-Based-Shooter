@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class Soldier : MonoBehaviour
@@ -37,6 +38,7 @@ public class Soldier : MonoBehaviour
     public int GetActionPoints() => this._actionPoints;
     public bool GetIsEnemy() => this._isEnemy;
     public void TakeDamage(int damageAmount) => this._healthController.TakeDamage(damageAmount);
+    public bool CanDoAction(string actionName) => this._actionPoints >= this.GetActionCost(actionName);
 
     public void ResetActionPoints()
     {
@@ -53,13 +55,31 @@ public class Soldier : MonoBehaviour
     public void DoAction(Action OnActionComplete, Vector3 worldPosition, string actionName)
     {
         BaseAction action = this._actions.First(action => action.ToString() == actionName);
-        if (action.ActionCost > this._actionPoints)
+        if (!this.CanDoAction(actionName))
         {
+            Debug.LogError($"Couldn't take action! Current action points {this._actionPoints}");
             return;
         }
 
         action.DoAction(OnActionComplete, worldPosition);
         this._actionPoints -= action.ActionCost;
         this.OnActionPointsChange?.Invoke(this._actionPoints);
+    }
+
+    public Task DoAction(Vector3 worldPosition, string actionName)
+    {
+        TaskCompletionSource<bool> tcs = new();
+        BaseAction action = this._actions.First(action => action.ToString() == actionName);
+        if (!this.CanDoAction(actionName))
+        {
+            Debug.LogError($"Couldn't take action! Current action points {this._actionPoints}");
+            tcs.TrySetResult(false);
+            return tcs.Task;
+        }
+
+        action.DoAction(() => tcs.TrySetResult(true), worldPosition);
+        this._actionPoints -= action.ActionCost;
+        this.OnActionPointsChange?.Invoke(this._actionPoints);
+        return tcs.Task;
     }
 }
