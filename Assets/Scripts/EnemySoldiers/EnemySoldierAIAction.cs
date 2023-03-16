@@ -16,7 +16,7 @@ public class EnemySoldierAIAction
         this._soldier = sodlier;
     }
 
-    public int GetActionValue()
+    public int GetBestActionValue()
     {
         if (this.ActionName == Constants.SoldierActionNames.Shoot)
         {
@@ -24,7 +24,25 @@ public class EnemySoldierAIAction
         }
         if (this.ActionName == Constants.SoldierActionNames.Move)
         {
-            return 10 & LevelGrid.Instance.GetValidGridTiles(Constants.SoldierActionTargetTypes.Enemy, this._soldier, Constants.SoldierActionNames.Shoot).Count();
+            return 10 * LevelGrid.Instance.GetValidGridTiles(Constants.SoldierActionTargetTypes.Enemy, this._soldier, this._soldier.transform.position, Constants.SoldierActionNames.Shoot).Count();
+        }
+        if (this.ActionName == Constants.SoldierActionNames.Spin)
+        {
+            return 0;
+        }
+
+        return 0;
+    }
+
+    private int GetActionValue(GridTile gridTile)
+    {
+        if (this.ActionName == Constants.SoldierActionNames.Shoot)
+        {
+            return 100;
+        }
+        if (this.ActionName == Constants.SoldierActionNames.Move)
+        {
+            return 10 * LevelGrid.Instance.GetValidGridTiles(Constants.SoldierActionTargetTypes.Enemy, this._soldier, LevelGrid.Instance.GetWorldPosition(gridTile), Constants.SoldierActionNames.Shoot).Count();
         }
         if (this.ActionName == Constants.SoldierActionNames.Spin)
         {
@@ -42,20 +60,17 @@ public class EnemySoldierAIAction
             return false;
         }
 
-        GridTile closestGridTile = this._validGridTiles[0];
+        GridTile highestActionValueGrid = this._validGridTiles[0];
 
         foreach (GridTile gridTile in this._validGridTiles)
         {
-            int distanceToGridTile = Mathf.Abs(gridTile.GetGridPosition().x - this._originalGridTile.GetGridPosition().x) + Mathf.Abs(gridTile.GetGridPosition().z - this._originalGridTile.GetGridPosition().z);
-            int distanceToCurrentClosestGridPosition = Mathf.Abs(closestGridTile.GetGridPosition().x - this._originalGridTile.GetGridPosition().x) + Mathf.Abs(closestGridTile.GetGridPosition().z - this._originalGridTile.GetGridPosition().z);
-
-            if (distanceToGridTile < distanceToCurrentClosestGridPosition)
+            if (this.GetActionValue(gridTile) > this.GetActionValue(highestActionValueGrid))
             {
-                closestGridTile = gridTile;
+                highestActionValueGrid = gridTile;
             }
         }
 
-        targetPosition = LevelGrid.Instance.GetWorldPosition(closestGridTile);
+        targetPosition = LevelGrid.Instance.GetWorldPosition(highestActionValueGrid);
         return true;
     }
 }

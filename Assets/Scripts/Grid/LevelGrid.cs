@@ -214,7 +214,7 @@ public class LevelGrid : MonoBehaviour
         Soldier selectedSoldier = SoldiersActionController.Instance.GetSelectedSolder();
         string selectedActionName = SoldiersActionController.Instance.GetSelectedActionName();
         Constants.SoldierActionTargetTypes selectedActionTargetType = SoldiersActionController.Instance.GetSelectedActionTargetType();
-        GridTile[] validGridTiles = this.GetValidGridTiles(selectedActionTargetType, selectedSoldier, selectedActionName);
+        GridTile[] validGridTiles = this.GetValidGridTiles(selectedActionTargetType, selectedSoldier, selectedSoldier.transform.position, selectedActionName);
         ClearAllActiveGridTiles();
         Constants.GridTileColor color = Constants.GridTileColor.White;
 
@@ -244,10 +244,10 @@ public class LevelGrid : MonoBehaviour
         AddGridTilesActive(validGridTiles, color);
     }
 
-    public GridTile[] GetValidGridTiles(Constants.SoldierActionTargetTypes actionTargetType, Soldier soldier, string actionName)
+    public GridTile[] GetValidGridTiles(Constants.SoldierActionTargetTypes actionTargetType, Soldier soldier, Vector3 originalPosition, string actionName)
     {
         GridTile[] validGridTiles = Array.Empty<GridTile>();
-        GridTile soldierGridTile = this._gridController.GetGridTile(soldier.transform.position);
+        GridTile soldierGridTile = this._gridController.GetGridTile(originalPosition);
         int actionMaxEffectiveDistance = soldier.GetActionEffectiveDistance(actionName);
         bool doDiamondShape = actionName == Constants.SoldierActionNames.Shoot;
         bool isPlayer = TurnController.Instance.GetIsPlayerTurn();

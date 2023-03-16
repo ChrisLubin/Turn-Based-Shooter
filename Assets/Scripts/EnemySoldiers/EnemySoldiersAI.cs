@@ -40,7 +40,7 @@ public class EnemySoldiersAI : MonoBehaviour
 
                 foreach (string actionName in actionNamesHavePointsFor)
                 {
-                    GridTile[] validGridTiles = LevelGrid.Instance.GetValidGridTiles(soldier.GetActionTargetType(actionName), soldier, actionName);
+                    GridTile[] validGridTiles = LevelGrid.Instance.GetValidGridTiles(soldier.GetActionTargetType(actionName), soldier, soldier.transform.position, actionName);
                     if (validGridTiles.Count() > 0)
                     {
                         EnemySoldierAIAction action = new(actionName, validGridTiles, LevelGrid.Instance.GetGridTile(soldier.transform.position), soldier);
@@ -49,7 +49,7 @@ public class EnemySoldiersAI : MonoBehaviour
                     }
                 }
 
-                aiActions.Sort((EnemySoldierAIAction a, EnemySoldierAIAction b) => b.GetActionValue() - a.GetActionValue());
+                aiActions.Sort((EnemySoldierAIAction a, EnemySoldierAIAction b) => b.GetBestActionValue() - a.GetBestActionValue());
 
                 if (aiActions.Count > 0)
                 {
