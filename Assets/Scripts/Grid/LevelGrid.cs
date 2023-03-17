@@ -18,7 +18,7 @@ public class LevelGrid : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            this._gridController = new GridController<GridTile>(7, 7, 2f);
+            this._gridController = new GridController<GridTile>(12, 15, 2f);
             return;
         }
 

@@ -1,15 +1,17 @@
 using System;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class SoldierMoveActionController : BaseAction
 {
-    private Vector3 _targetPosition;
     public Action OnStartMoving;
     public Action OnStopMoving;
+    private NavMeshAgent _navMeshAgent;
 
     private void Awake()
     {
-        this.MaxEffectiveDistance = 2;
+        this._navMeshAgent = GetComponent<NavMeshAgent>();
+        this.MaxEffectiveDistance = 6;
         this.ActionCost = 1;
         this.TargetType = Constants.SoldierActionTargetTypes.EmptyTile;
     }
@@ -29,7 +31,7 @@ public class SoldierMoveActionController : BaseAction
         this.HandleMove();
     }
 
-    private void SetTargetPosition(Vector3 targetPosition) => this._targetPosition = targetPosition;
+    private void SetTargetPosition(Vector3 targetPosition) => this._navMeshAgent.destination = targetPosition;
     public override string ToString() => Constants.SoldierActionNames.Move;
 
     protected override void DoAction(Vector3 targetPosition)
@@ -40,17 +42,11 @@ public class SoldierMoveActionController : BaseAction
 
     private void HandleMove()
     {
-        if (Vector3.Distance(transform.position, this._targetPosition) < 0.05f)
+        if (Vector3.Distance(transform.position, this._navMeshAgent.destination) < 0.05f)
         {
             this.OnStopMoving?.Invoke();
             this.ActionComplete();
             return;
         }
-
-        float moveSpeed = 4f;
-        float rotateSpeed = 10f;
-        Vector3 moveDirection = (_targetPosition - transform.position).normalized;
-        transform.forward = Vector3.Lerp(transform.forward, moveDirection, Time.deltaTime * rotateSpeed);
-        transform.position += moveDirection * moveSpeed * Time.deltaTime;
     }
 }
