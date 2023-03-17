@@ -141,10 +141,15 @@ public class LevelGrid : MonoBehaviour
             return false;
         }
 
-        int actionMaxEffectiveDistance = SoldiersActionController.Instance.GetSelectedActionEffectiveDistance();
-        Constants.SoldierActionTargetTypes actionTargetType = SoldiersActionController.Instance.GetSelectedActionTargetType();
         GridTile fromGridTile = this._gridController.GetGridTile(this._gridController.GetWorldPosition(from));
         GridTile toGridTile = this._gridController.GetGridTile(this._gridController.GetWorldPosition(to));
+        int actionMaxEffectiveDistance = SoldiersActionController.Instance.GetSelectedActionEffectiveDistance();
+        Constants.SoldierActionTargetTypes actionTargetType = SoldiersActionController.Instance.GetSelectedActionTargetType();
+
+        if (this.IsOccupiedByObstacle(toGridTile))
+        {
+            return false;
+        }
 
         switch (actionTargetType)
         {
@@ -244,6 +249,12 @@ public class LevelGrid : MonoBehaviour
         AddGridTilesActive(validGridTiles, color);
     }
 
+    private bool IsOccupiedByObstacle(GridTile gridTile)
+    {
+        float rayCastOffsetDistance = 0.5f;
+        return Physics.Raycast(this.GetWorldPosition(gridTile) + Vector3.down * rayCastOffsetDistance, Vector3.up, rayCastOffsetDistance * 2, (int)Constants.LayerMaskIds.Obstacle);
+    }
+
     public GridTile[] GetValidGridTiles(Constants.SoldierActionTargetTypes actionTargetType, Soldier soldier, Vector3 originalPosition, string actionName)
     {
         GridTile[] validGridTiles = Array.Empty<GridTile>();
@@ -266,6 +277,7 @@ public class LevelGrid : MonoBehaviour
                 validGridTiles = squareSurroundingGridTiles.Where(tile => !tile.HasSoldier()).ToArray();
                 break;
         }
+        validGridTiles = validGridTiles.Where(tile => !this.IsOccupiedByObstacle(tile)).ToArray();
 
         return validGridTiles;
     }

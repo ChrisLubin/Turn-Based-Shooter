@@ -39,13 +39,32 @@ public class GlobalMouse : MonoBehaviour
             }
 
             GameObject gameObject = raycastHit.collider.gameObject;
-            int layerMaskId = gameObject.layer;
-            if (layerMaskId != (int)Constants.LayerMaskIds.Default && layerMaskId != (int)Constants.LayerMaskIds.IgnoreRaycast)
+            int layerMaskId = 1 << gameObject.layer;
+
+            if (this.ShouldPassThroughClick(layerMaskId))
             {
-                this.OnLayerLeftClick?.Invoke(1 << layerMaskId, gameObject);
+                this.OnLayerLeftClick?.Invoke(layerMaskId, gameObject);
             }
             return;
         }
+    }
+
+    private bool ShouldPassThroughClick(int layerMaskId)
+    {
+        if (layerMaskId == (int)Constants.LayerMaskIds.Default)
+        {
+            return false;
+        }
+        if (layerMaskId == (int)Constants.LayerMaskIds.IgnoreRaycast)
+        {
+            return false;
+        }
+        if (layerMaskId == (int)Constants.LayerMaskIds.Obstacle)
+        {
+            return false;
+        }
+
+        return true;
     }
 
     public Vector3 GetFloorPosition()

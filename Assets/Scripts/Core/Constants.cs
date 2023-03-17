@@ -4,6 +4,7 @@ public static class Constants
     {
         Default = 1 << 0,
         IgnoreRaycast = 1 << 2,
+        Obstacle = 1 << 6,
         MainFloor = 1 << 7,
         Soldier = 1 << 8,
     }
