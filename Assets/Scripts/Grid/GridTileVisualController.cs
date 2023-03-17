@@ -18,6 +18,7 @@ public class GridTileVisualController : MonoBehaviour
     private void Awake()
     {
         this._textMeshPro = GetComponentInChildren<TextMeshPro>();
+        this._textMeshPro.gameObject.SetActive(false);
         this._selectedVisual = GetComponentInChildren<MeshRenderer>();
         this.SetVisual(false);
     }
