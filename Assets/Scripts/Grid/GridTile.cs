@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class GridTile : MonoBehaviour
+public class GridTile : MonoBehaviour, ITGridTile
 {
     private GridPosition _gridPosition;
     private GridTileSoldierController _soldierController;

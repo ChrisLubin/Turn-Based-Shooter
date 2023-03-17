@@ -1,26 +1,28 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GridController
+public interface ITGridTile { public GridPosition GetGridPosition(); public void SetGridPosition(GridPosition gridPosition); }
+
+public class GridController<TGridTile> where TGridTile : ITGridTile
 {
     private int _width;
     private int _height;
     private float _cellSize;
-    private GridTile[,] _gridTileMatrix;
+    private TGridTile[,] _gridTileMatrix;
 
     public GridController(int width, int height, float cellSize)
     {
         this._width = width;
         this._height = height;
         this._cellSize = cellSize;
-        this._gridTileMatrix = new GridTile[width, height];
+        this._gridTileMatrix = new TGridTile[width, height];
     }
 
     public Vector3 GetWorldPosition(GridPosition gridPosition) => new Vector3(gridPosition.x, 0, gridPosition.z) * this._cellSize;
-    public GridPosition GetGridPosition(Vector3 worldPosition) => new GridPosition(Mathf.RoundToInt(worldPosition.x / this._cellSize), Mathf.RoundToInt(worldPosition.z / this._cellSize));
+    public GridPosition GetGridPosition(Vector3 worldPosition) => new(Mathf.RoundToInt(worldPosition.x / this._cellSize), Mathf.RoundToInt(worldPosition.z / this._cellSize));
     public bool IsValidGridPosition(GridPosition gridPosition) => gridPosition.x >= 0 && gridPosition.z >= 0 && gridPosition.x < this._width && gridPosition.z < this._height;
 
-    public GridTile GetGridTile(Vector3 worldPosition)
+    public TGridTile GetGridTile(Vector3 worldPosition)
     {
         GridPosition gridPosition = GetGridPosition(worldPosition);
         return this._gridTileMatrix[gridPosition.x, gridPosition.z];
@@ -34,16 +36,16 @@ public class GridController
             {
                 GridPosition gridPosition = new(x, z);
                 Transform debugTransform = GameObject.Instantiate(gridTilePrefab, GetWorldPosition(gridPosition), Quaternion.identity, parentTransform);
-                GridTile gridTile = debugTransform.GetComponent<GridTile>();
+                TGridTile gridTile = debugTransform.GetComponent<TGridTile>();
                 gridTile.SetGridPosition(gridPosition);
                 _gridTileMatrix[x, z] = gridTile;
             }
         }
     }
 
-    public GridTile[] GetSurroundingGridTiles(GridTile originalGridTile, int offset, bool doDiamondShape = false)
+    public TGridTile[] GetSurroundingGridTiles(TGridTile originalGridTile, int offset, bool doDiamondShape = false)
     {
-        List<GridTile> surroundingGridTiles = new();
+        List<TGridTile> surroundingGridTiles = new();
         GridPosition originalGridPosition = originalGridTile.GetGridPosition();
 
         for (int x = originalGridPosition.x - offset; x <= originalGridPosition.x + offset; x++)
@@ -60,7 +62,7 @@ public class GridController
                 GridPosition gridPosition = new(x, z);
                 if (IsValidGridPosition(gridPosition) && originalGridPosition != gridPosition)
                 {
-                    GridTile gridTile = this._gridTileMatrix[x, z];
+                    TGridTile gridTile = this._gridTileMatrix[x, z];
                     surroundingGridTiles.Add(gridTile);
                 }
             }

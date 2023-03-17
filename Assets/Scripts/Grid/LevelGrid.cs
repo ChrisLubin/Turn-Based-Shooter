@@ -7,7 +7,7 @@ using UnityEngine.EventSystems;
 public class LevelGrid : MonoBehaviour
 {
     [SerializeField] private Transform _gridTilePrefab;
-    private GridController _gridController;
+    private GridController<GridTile> _gridController;
     public static LevelGrid Instance { get; private set; }
     private List<Soldier> _soldiers;
     private IDictionary<Soldier, GridTile> _soldierToGridTileMap = new Dictionary<Soldier, GridTile>();
@@ -18,7 +18,7 @@ public class LevelGrid : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            this._gridController = new GridController(7, 7, 2f);
+            this._gridController = new GridController<GridTile>(7, 7, 2f);
             return;
         }
 
