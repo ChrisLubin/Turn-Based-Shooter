@@ -1,18 +1,17 @@
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 public class EnemySoldierAIAction
 {
     public string ActionName { get; private set; }
-    private GridTile[] _validGridTiles;
-    private GridTile _originalGridTile;
+    private List<GridTile> _validGridTiles;
     private Soldier _soldier;
 
-    public EnemySoldierAIAction(string actionName, GridTile[] validGridTiles, GridTile originalGridTile, Soldier sodlier)
+    public EnemySoldierAIAction(string actionName, GridTile[] validGridTiles, Soldier sodlier)
     {
         this.ActionName = actionName;
-        this._validGridTiles = validGridTiles;
-        this._originalGridTile = originalGridTile;
+        this._validGridTiles = validGridTiles.ToList();
         this._soldier = sodlier;
     }
 
@@ -20,15 +19,25 @@ public class EnemySoldierAIAction
     {
         if (this.ActionName == Constants.SoldierActionNames.Shoot)
         {
-            return 100;
+            return this.GetActionValue(LevelGrid.Instance.GetGridTile(this._soldier.transform.position));
         }
         if (this.ActionName == Constants.SoldierActionNames.Move)
         {
-            return 10 * LevelGrid.Instance.GetValidGridTiles(Constants.SoldierActionTargetTypes.Enemy, this._soldier, this._soldier.transform.position, Constants.SoldierActionNames.Shoot).Count();
+            int highestActionValue = 1;
+            foreach (GridTile tile in this._validGridTiles)
+            {
+                int actionValue = this.GetActionValue(tile);
+                if (actionValue > highestActionValue)
+                {
+                    highestActionValue = actionValue;
+                }
+            }
+
+            return highestActionValue;
         }
         if (this.ActionName == Constants.SoldierActionNames.Spin)
         {
-            return 0;
+            return this.GetActionValue(LevelGrid.Instance.GetGridTile(this._soldier.transform.position));
         }
 
         return 0;
@@ -38,11 +47,23 @@ public class EnemySoldierAIAction
     {
         if (this.ActionName == Constants.SoldierActionNames.Shoot)
         {
-            return 100;
+            int canShootAtCount = LevelGrid.Instance.GetValidGridTiles(Constants.SoldierActionTargetTypes.Enemy, this._soldier, LevelGrid.Instance.GetWorldPosition(gridTile), Constants.SoldierActionNames.Shoot).Count();
+
+            if (canShootAtCount == 0)
+            {
+                return -1;
+            }
+            return 100 - (canShootAtCount - 1) * 2;
         }
         if (this.ActionName == Constants.SoldierActionNames.Move)
         {
-            return 10 * LevelGrid.Instance.GetValidGridTiles(Constants.SoldierActionTargetTypes.Enemy, this._soldier, LevelGrid.Instance.GetWorldPosition(gridTile), Constants.SoldierActionNames.Shoot).Count();
+            int canShootAtCount = LevelGrid.Instance.GetValidGridTiles(Constants.SoldierActionTargetTypes.Enemy, this._soldier, LevelGrid.Instance.GetWorldPosition(gridTile), Constants.SoldierActionNames.Shoot).Count();
+
+            if (canShootAtCount == 0)
+            {
+                return 1;
+            }
+            return 99 - (canShootAtCount - 1) * 2;
         }
         if (this.ActionName == Constants.SoldierActionNames.Spin)
         {
@@ -60,16 +81,19 @@ public class EnemySoldierAIAction
             return false;
         }
 
-        GridTile highestActionValueGrid = this._validGridTiles[0];
-
-        foreach (GridTile gridTile in this._validGridTiles)
+        this._validGridTiles.Sort((GridTile a, GridTile b) =>
         {
-            if (this.GetActionValue(gridTile) > this.GetActionValue(highestActionValueGrid))
+            int distanceA = Mathf.Abs((int)this._soldier.transform.position.x - a.GetGridPosition().x) + Mathf.Abs((int)this._soldier.transform.position.z - a.GetGridPosition().z);
+            int distanceB = Mathf.Abs((int)this._soldier.transform.position.x - b.GetGridPosition().x) + Mathf.Abs((int)this._soldier.transform.position.z - b.GetGridPosition().z);
+            if (this.GetActionValue(a) == this.GetActionValue(b))
             {
-                highestActionValueGrid = gridTile;
+                return distanceA - distanceB;
             }
-        }
 
+            return this.GetActionValue(b) - this.GetActionValue(a);
+        });
+
+        GridTile highestActionValueGrid = this._validGridTiles[0];
         targetPosition = LevelGrid.Instance.GetWorldPosition(highestActionValueGrid);
         return true;
     }

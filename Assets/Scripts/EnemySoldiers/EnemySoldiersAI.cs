@@ -43,7 +43,7 @@ public class EnemySoldiersAI : MonoBehaviour
                     GridTile[] validGridTiles = LevelGrid.Instance.GetValidGridTiles(soldier.GetActionTargetType(actionName), soldier, soldier.transform.position, actionName);
                     if (validGridTiles.Count() > 0)
                     {
-                        EnemySoldierAIAction action = new(actionName, validGridTiles, LevelGrid.Instance.GetGridTile(soldier.transform.position), soldier);
+                        EnemySoldierAIAction action = new(actionName, validGridTiles, soldier);
                         aiActions.Add(action);
                         actionNamesWithValidGridPositions.Add(actionName);
                     }
