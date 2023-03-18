@@ -45,6 +45,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b519c50d2c71b6b4bac73468bd489977, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _grenadeExplodeVfxPrefab: {fileID: 3008455514981758138, guid: 38df4e0d8769306479c90c3ba4a27ca1,
+    type: 3}
 --- !u!1 &3021849744983232111
 GameObject:
   m_ObjectHideFlags: 0

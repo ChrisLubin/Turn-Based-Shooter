@@ -19,7 +19,7 @@ public class SoldierGrenadeActionController : BaseAction
 
     private void Awake()
     {
-        this.MaxEffectiveDistance = 7;
+        this.MaxEffectiveDistance = 6;
         this.ActionCost = 2;
         this.TargetType = Constants.SoldierActionTargetTypes.Any;
     }
@@ -44,7 +44,7 @@ public class SoldierGrenadeActionController : BaseAction
     private void InvokeGrenadeAction()
     {
         this.OnGrenadeHit?.Invoke(this._targetPosition, 30);
-        ScreenShakeController.Instance.Shake();
+        ScreenShakeController.Instance.Shake(2);
     }
 
     protected async override void DoAction(Vector3 worldPosition)

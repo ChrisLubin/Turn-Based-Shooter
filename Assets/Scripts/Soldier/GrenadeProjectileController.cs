@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class GrenadeProjectileController : MonoBehaviour
 {
+    [SerializeField] private Transform _grenadeExplodeVfxPrefab;
     private Vector3 _targetPosition;
     public Action OnHit;
 
@@ -28,6 +29,7 @@ public class GrenadeProjectileController : MonoBehaviour
 
             this.OnHit();
             transform.position = this._targetPosition;
+            Instantiate(this._grenadeExplodeVfxPrefab, this._targetPosition + Vector3.up * 1f, Quaternion.identity);
             Destroy(this.gameObject);
         }
     }
