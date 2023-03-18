@@ -71,6 +71,7 @@ public class SoldierShootActionController : BaseAction
         Transform bulletTransform = Instantiate(_bulletPrefab, _shootPoint.position, Quaternion.identity);
         BulletProjectile bulletProjectile = bulletTransform.GetComponent<BulletProjectile>();
         bulletProjectile.SendBullet(targetPosition, this.InvokeShootAction);
+        ScreenShakeController.Instance.Shake();
         await Task.Delay(TimeSpan.FromMilliseconds(SHOOT_ANIMATION_TIME));
     }
 }
