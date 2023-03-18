@@ -15,7 +15,8 @@ public static class Constants
         Blue,
         Red,
         RedSoft,
-        Yellow
+        Yellow,
+        Orange,
     }
 
     public static class SoldierActionNames
@@ -23,6 +24,7 @@ public static class Constants
         public const string Move = "MOVE";
         public const string Spin = "SPIN";
         public const string Shoot = "SHOOT";
+        public const string Grenade = "GRENADE";
     }
 
     public enum SoldierActionTargetTypes
@@ -30,5 +32,6 @@ public static class Constants
         Self,
         Enemy,
         EmptyTile,
+        Any,
     }
 }

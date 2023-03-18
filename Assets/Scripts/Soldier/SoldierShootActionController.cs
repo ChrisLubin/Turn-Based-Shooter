@@ -69,7 +69,7 @@ public class SoldierShootActionController : BaseAction
     private async Task ShootBullet(Vector3 targetPosition)
     {
         Transform bulletTransform = Instantiate(_bulletPrefab, _shootPoint.position, Quaternion.identity);
-        BulletProjectile bulletProjectile = bulletTransform.GetComponent<BulletProjectile>();
+        BulletProjectileController bulletProjectile = bulletTransform.GetComponent<BulletProjectileController>();
         bulletProjectile.SendBullet(targetPosition, this.InvokeShootAction);
         ScreenShakeController.Instance.Shake();
         await Task.Delay(TimeSpan.FromMilliseconds(SHOOT_ANIMATION_TIME));

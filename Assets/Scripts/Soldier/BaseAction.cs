@@ -14,7 +14,7 @@ public abstract class BaseAction : MonoBehaviour
 
     public void DoAction(Action OnActionComplete, Vector3 worldPosition)
     {
-        if (this.TargetType == Constants.SoldierActionTargetTypes.Enemy)
+        if (this is SoldierShootActionController)
         {
             Vector3 soldierHeight = Vector3.up * 1.7f;
             Vector3 aimDirection = (worldPosition - transform.position).normalized;
@@ -31,7 +31,7 @@ public abstract class BaseAction : MonoBehaviour
 
     protected void ActionComplete()
     {
-        if (this.TargetType == Constants.SoldierActionTargetTypes.Enemy)
+        if (this is SoldierShootActionController)
         {
             ActionCameraController.Instance.StopShot();
         }

@@ -327,6 +327,8 @@ MonoBehaviour:
     material: {fileID: 2100000, guid: 790148cbc780c1e48ae3b09e854cc510, type: 2}
   - color: 4
     material: {fileID: 2100000, guid: 148825eaa9942c54bbe2e15fe6247211, type: 2}
+  - color: 5
+    material: {fileID: 2100000, guid: ca2c2dae8dc25444cae4fcd9e88d5842, type: 2}
 --- !u!1 &8976349983122662084
 GameObject:
   m_ObjectHideFlags: 0

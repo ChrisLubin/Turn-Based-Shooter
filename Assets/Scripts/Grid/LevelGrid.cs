@@ -162,6 +162,8 @@ public class LevelGrid : MonoBehaviour
                 }
 
                 return this._gridController.GetSurroundingGridTiles(fromGridTile, actionMaxEffectiveDistance).Contains(toGridTile);
+            case Constants.SoldierActionTargetTypes.Any:
+                return this._gridController.GetSurroundingGridTiles(fromGridTile, actionMaxEffectiveDistance).Contains(toGridTile);
             case Constants.SoldierActionTargetTypes.EmptyTile:
                 if (toGridTile.HasSoldier())
                 {
@@ -222,6 +224,9 @@ public class LevelGrid : MonoBehaviour
         GridTile[] validGridTiles = this.GetValidGridTiles(selectedActionTargetType, selectedSoldier, selectedSoldier.transform.position, selectedActionName);
         ClearAllActiveGridTiles();
         Constants.GridTileColor color = Constants.GridTileColor.White;
+        GridTile selectedSoldierGridTile = this._gridController.GetGridTile(selectedSoldier.transform.position);
+        int selectedActionMaxEffectiveDistance = SoldiersActionController.Instance.GetSelectedActionEffectiveDistance();
+        GridTile[] surroundingGridTiles = this._gridController.GetSurroundingGridTiles(selectedSoldierGridTile, selectedActionMaxEffectiveDistance);
 
         if (selectedSoldier.GetActionPoints() == 0)
         {
@@ -235,11 +240,11 @@ public class LevelGrid : MonoBehaviour
                 break;
             case Constants.SoldierActionTargetTypes.Enemy:
                 color = Constants.GridTileColor.Red;
-                GridTile selectedSoldierGridTile = this._gridController.GetGridTile(selectedSoldier.transform.position);
-                int selectedActionMaxEffectiveDistance = SoldiersActionController.Instance.GetSelectedActionEffectiveDistance();
-                GridTile[] surroundingGridTiles = this._gridController.GetSurroundingGridTiles(selectedSoldierGridTile, selectedActionMaxEffectiveDistance);
                 GridTile[] nonValidGridTiles = surroundingGridTiles.Where(tile => !tile.HasEnemySoldier() && !this.IsOccupiedByObstacle(tile) && !this.IsObstacleBetween(selectedSoldierGridTile, tile)).ToArray();
                 AddGridTilesActive(nonValidGridTiles, Constants.GridTileColor.RedSoft);
+                break;
+            case Constants.SoldierActionTargetTypes.Any:
+                color = Constants.GridTileColor.Orange;
                 break;
             case Constants.SoldierActionTargetTypes.EmptyTile:
                 color = Constants.GridTileColor.White;
@@ -270,7 +275,7 @@ public class LevelGrid : MonoBehaviour
         GridTile soldierGridTile = this._gridController.GetGridTile(originalPosition);
         int actionMaxEffectiveDistance = soldier.GetActionEffectiveDistance(actionName);
         bool isPlayer = TurnController.Instance.GetIsPlayerTurn();
-        GridTile[] surroundingGridTiles = this._gridController.GetSurroundingGridTiles(soldierGridTile, actionMaxEffectiveDistance);
+        GridTile[] surroundingGridTiles = this._gridController.GetSurroundingGridTiles(soldierGridTile, actionMaxEffectiveDistance).Where(tile => !this.IsOccupiedByObstacle(tile)).ToArray();
 
         switch (actionTargetType)
         {
@@ -280,11 +285,13 @@ public class LevelGrid : MonoBehaviour
             case Constants.SoldierActionTargetTypes.Enemy:
                 validGridTiles = surroundingGridTiles.Where(tile => (isPlayer ? tile.HasEnemySoldier() : tile.HasFriendlySoldier()) && !this.IsObstacleBetween(soldierGridTile, tile)).ToArray();
                 break;
+            case Constants.SoldierActionTargetTypes.Any:
+                validGridTiles = surroundingGridTiles.Where(tile => !this.IsObstacleBetween(soldierGridTile, tile)).ToArray();
+                break;
             case Constants.SoldierActionTargetTypes.EmptyTile:
                 validGridTiles = surroundingGridTiles.Where(tile => !tile.HasSoldier()).ToArray();
                 break;
         }
-        validGridTiles = validGridTiles.Where(tile => !this.IsOccupiedByObstacle(tile)).ToArray();
 
         return validGridTiles;
     }

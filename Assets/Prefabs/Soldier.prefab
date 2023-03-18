@@ -177,6 +177,7 @@ GameObject:
   - component: {fileID: -2475572008420646195}
   - component: {fileID: 1074916051929651405}
   - component: {fileID: 2788495619576320466}
+  - component: {fileID: 4494966686534985626}
   m_Layer: 8
   m_Name: Soldier
   m_TagString: Untagged
@@ -329,6 +330,21 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &4494966686534985626
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2685048874554715001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 933b608aeb67a8744988dd6cb29e99e8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _grenadePrefab: {fileID: 3021849744706519745, guid: cb6f616892db32b4e87750868b88530b,
+    type: 3}
+  _throwPoint: {fileID: 0}
 --- !u!1 &4802233827517649896
 GameObject:
   m_ObjectHideFlags: 0

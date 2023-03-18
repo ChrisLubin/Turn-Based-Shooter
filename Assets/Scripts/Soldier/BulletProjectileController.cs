@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class BulletProjectile : MonoBehaviour
+public class BulletProjectileController : MonoBehaviour
 {
     private Vector3 _targetPosition;
     private TrailRenderer _trailRenderer;
