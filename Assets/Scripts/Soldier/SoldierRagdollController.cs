@@ -7,7 +7,9 @@ public class SoldierRagdollController : MonoBehaviour
     public void DoRagroll(Transform originalRootBone)
     {
         this.MatchAllChildTransform(originalRootBone, this._ragdollRootBone);
-        this.ApplyExplosionToRagdoll(this._ragdollRootBone, 400f, transform.position, 10f);
+
+        Vector3 randomDirection = new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-1f, 1f));
+        this.ApplyExplosionToRagdoll(this._ragdollRootBone, 400f, transform.position + randomDirection, 10f);
     }
 
     private void MatchAllChildTransform(Transform root, Transform clone)

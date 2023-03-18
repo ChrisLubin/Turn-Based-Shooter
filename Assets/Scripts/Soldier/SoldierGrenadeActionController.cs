@@ -67,6 +67,6 @@ public class SoldierGrenadeActionController : BaseAction
         Transform grenadeTransform = Instantiate(this._grenadePrefab, transform.position, Quaternion.identity);
         GrenadeProjectileController grenadeProjectile = grenadeTransform.GetComponent<GrenadeProjectileController>();
         grenadeProjectile.ThrowGrenade(targetPosition, this.InvokeGrenadeAction);
-        await Task.Delay(TimeSpan.FromMilliseconds(500));
+        await Task.Delay(TimeSpan.FromMilliseconds(200));
     }
 }
