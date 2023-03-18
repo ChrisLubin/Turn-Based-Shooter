@@ -11,7 +11,7 @@ public class SoldierMoveActionController : BaseAction
     private void Awake()
     {
         this._navMeshAgent = GetComponent<NavMeshAgent>();
-        this.MaxEffectiveDistance = 6;
+        this.MaxEffectiveDistance = 4;
         this.ActionCost = 1;
         this.TargetType = Constants.SoldierActionTargetTypes.EmptyTile;
     }

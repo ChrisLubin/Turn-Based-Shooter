@@ -43,7 +43,7 @@ public class GridController<TGridTile> where TGridTile : ITGridTile
         }
     }
 
-    public TGridTile[] GetSurroundingGridTiles(TGridTile originalGridTile, int offset, bool doDiamondShape = false)
+    public TGridTile[] GetSurroundingGridTiles(TGridTile originalGridTile, int offset)
     {
         List<TGridTile> surroundingGridTiles = new();
         GridPosition originalGridPosition = originalGridTile.GetGridPosition();
@@ -54,7 +54,7 @@ public class GridController<TGridTile> where TGridTile : ITGridTile
             {
                 int distanceToGridPosition = Mathf.Abs(x - originalGridPosition.x) + Mathf.Abs(z - originalGridPosition.z);
 
-                if (doDiamondShape && distanceToGridPosition > offset)
+                if (distanceToGridPosition > offset)
                 {
                     continue;
                 }
