@@ -26,7 +26,9 @@ public class Soldier : MonoBehaviour
         this._healthController = GetComponent<SoldierHealthController>();
         this._actions = GetComponents<BaseAction>();
         SoldierShootActionController shootAction = GetComponent<SoldierShootActionController>();
+        SoldierSwordActionController swordAction = GetComponent<SoldierSwordActionController>();
         shootAction.OnShoot += (Vector3 positionToShoot, int damageAmount) => this.OnShoot?.Invoke(positionToShoot, damageAmount);
+        swordAction.OnHit += (Vector3 positionToShoot, int damageAmount) => this.OnShoot?.Invoke(positionToShoot, damageAmount);
         this._healthController.OnDeath += this.DestroySoldier;
     }
 

@@ -25,6 +25,7 @@ public static class Constants
         public const string Spin = "SPIN";
         public const string Shoot = "SHOOT";
         public const string Grenade = "GRENADE";
+        public const string Sword = "SWORD";
     }
 
     public enum SoldierActionTargetTypes
