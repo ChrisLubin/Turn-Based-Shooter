@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class SoldiersActionController : MonoBehaviour
@@ -43,6 +45,22 @@ public class SoldiersActionController : MonoBehaviour
 
     public void OnTurnEnd(bool isPlayerTurn)
     {
+        bool isSelectedSoldierDead = this._selectedSoldier == null;
+
+        if (isSelectedSoldierDead)
+        {
+            List<Soldier> friendlySoldiers = GameObject.FindObjectsOfType<Soldier>().Where(tempSoldier => !tempSoldier.GetIsEnemy()).ToList();
+            if (friendlySoldiers.Count == 0)
+            {
+                this._selectedSoldier = null;
+                return;
+            }
+            this.HandleSoldierSelection(friendlySoldiers[0]);
+            this._visualController.SetActionPointsVisual(isPlayerTurn);
+            this._visualController.UpdateActionPoints(this._selectedSoldier.GetActionPoints());
+            return;
+        }
+
         this._selectedSoldier.SetVisual(isPlayerTurn);
         this._visualController.SetActionPointsVisual(isPlayerTurn);
         this._visualController.SetButtonsVisual(isPlayerTurn && this._selectedSoldier.GetActionPoints() != 0);
@@ -124,7 +142,13 @@ public class SoldiersActionController : MonoBehaviour
             return;
         }
 
-        this._selectedSoldier.SetVisual(false);
+        bool isSelectedSoldierDead = this._selectedSoldier == null;
+
+        if (!isSelectedSoldierDead)
+        {
+            this._selectedSoldier.SetVisual(false);
+        }
+
         this._selectedSoldier = newSoldier;
         newSoldier.SetVisual(true);
         this._visualController.UpdateSoldierActionButtons(newSoldier, out string firstActionName);

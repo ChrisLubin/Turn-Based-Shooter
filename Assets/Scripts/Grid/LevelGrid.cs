@@ -90,6 +90,11 @@ public class LevelGrid : MonoBehaviour
             return;
         }
 
+        if (SoldiersActionController.Instance.GetSelectedSolder() == null)
+        {
+            return;
+        }
+
         this.UpdateActiveGridTiles();
     }
 

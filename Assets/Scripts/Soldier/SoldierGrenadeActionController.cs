@@ -20,7 +20,7 @@ public class SoldierGrenadeActionController : BaseAction
     private void Awake()
     {
         this.MaxEffectiveDistance = 6;
-        this.ActionCost = 2;
+        this.ActionCost = 1;
         this.TargetType = Constants.SoldierActionTargetTypes.Any;
     }
 
