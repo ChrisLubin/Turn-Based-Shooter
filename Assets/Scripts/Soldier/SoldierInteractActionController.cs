@@ -9,7 +9,7 @@ public class SoldierInteractActionController : BaseAction
     private void Awake()
     {
         this.MaxEffectiveDistance = 1;
-        this.ActionCost = 0;
+        this.ActionCost = 1;
         this.TargetType = Constants.SoldierActionTargetTypes.Door;
     }
 

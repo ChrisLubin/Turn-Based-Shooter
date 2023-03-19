@@ -7,6 +7,7 @@ public static class Constants
         Obstacle = 1 << 6,
         MainFloor = 1 << 7,
         Soldier = 1 << 8,
+        Door = 1 << 9,
     }
 
     public enum GridTileColor
