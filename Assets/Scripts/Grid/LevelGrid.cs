@@ -10,6 +10,7 @@ public class LevelGrid : MonoBehaviour
     private GridController<GridTile> _gridController;
     public static LevelGrid Instance { get; private set; }
     private List<Soldier> _soldiers;
+    private List<Door> _doors;
     private IDictionary<Soldier, GridTile> _soldierToGridTileMap = new Dictionary<Soldier, GridTile>();
     private List<GridTile> _gridTilesWithActiveVisual = new();
 
@@ -38,6 +39,11 @@ public class LevelGrid : MonoBehaviour
         foreach (Soldier soldier in this._soldiers)
         {
             OnSoldierSpawn(soldier);
+        }
+        this._doors = GameObject.FindObjectsOfType<Door>().ToList();
+        foreach (Door door in this._doors)
+        {
+            OnDoorSpawn(door);
         }
         UpdateActiveGridTiles();
     }
@@ -70,6 +76,9 @@ public class LevelGrid : MonoBehaviour
 
     private void ClearSoldierAtGridTile(GridTile gridTile) => gridTile.RemoveSoldier();
     private void OnShoot(Vector3 positionToShoot, int damage) => this._gridController.GetGridTile(positionToShoot).GetSoldier()?.TakeDamage(damage);
+    private void OnInteract(Vector3 positionToShoot) => this._gridController.GetGridTile(positionToShoot).GetDoor()?.Interact();
+    private void SetDoorAtGridTile(GridTile gridTile, Door door) => gridTile.SetDoor(door);
+    private void OnDoorSpawn(Door door) => SetDoorAtGridTile(this._gridController.GetGridTile(door.transform.position), door);
     public GridTile GetGridTile(Vector3 worldPosition) => this._gridController.GetGridTile(worldPosition);
     public Vector3 GetWorldPosition(GridTile gridTile) => this._gridController.GetWorldPosition(gridTile.GetGridPosition());
 
@@ -150,6 +159,10 @@ public class LevelGrid : MonoBehaviour
         {
             return false;
         }
+        if (actionTargetType != Constants.SoldierActionTargetTypes.Door && toGridTile.HasDoor() && !toGridTile.IsDoorOpen())
+        {
+            return false;
+        }
 
         switch (actionTargetType)
         {
@@ -164,6 +177,8 @@ public class LevelGrid : MonoBehaviour
                 return this._gridController.GetSurroundingGridTiles(fromGridTile, actionMaxEffectiveDistance).Contains(toGridTile);
             case Constants.SoldierActionTargetTypes.Any:
                 return this._gridController.GetSurroundingGridTiles(fromGridTile, actionMaxEffectiveDistance).Contains(toGridTile);
+            case Constants.SoldierActionTargetTypes.Door:
+                return !toGridTile.HasSoldier() && toGridTile.HasDoor();
             case Constants.SoldierActionTargetTypes.EmptyTile:
                 if (toGridTile.HasSoldier())
                 {
@@ -180,6 +195,7 @@ public class LevelGrid : MonoBehaviour
     {
         soldier.OnShoot += this.OnShoot;
         soldier.OnDeath += this.OnSoldierDeath;
+        soldier.OnInteract += this.OnInteract;
         this._soldierToGridTileMap.Add(soldier, this._gridController.GetGridTile(soldier.transform.position));
         SetSoldierAtGridTile(this._gridController.GetGridTile(soldier.transform.position), soldier);
     }
@@ -188,6 +204,7 @@ public class LevelGrid : MonoBehaviour
     {
         soldier.OnShoot -= this.OnShoot;
         soldier.OnDeath -= this.OnSoldierDeath;
+        soldier.OnInteract -= this.OnInteract;
         GridTile gridTile = this._gridController.GetGridTile(soldier.transform.position);
         this.ClearSoldierAtGridTile(gridTile);
         this._soldiers.Remove(soldier);
@@ -249,6 +266,9 @@ public class LevelGrid : MonoBehaviour
             case Constants.SoldierActionTargetTypes.EmptyTile:
                 color = Constants.GridTileColor.White;
                 break;
+            case Constants.SoldierActionTargetTypes.Door:
+                color = Constants.GridTileColor.Blue;
+                break;
         }
 
         AddGridTilesActive(validGridTiles, color);
@@ -283,13 +303,16 @@ public class LevelGrid : MonoBehaviour
                 validGridTiles = new[] { soldierGridTile };
                 break;
             case Constants.SoldierActionTargetTypes.Enemy:
-                validGridTiles = surroundingGridTiles.Where(tile => (isPlayer ? tile.HasEnemySoldier() : tile.HasFriendlySoldier()) && !this.IsObstacleBetween(soldierGridTile, tile)).ToArray();
+                validGridTiles = surroundingGridTiles.Where(tile => (isPlayer ? tile.HasEnemySoldier() : tile.HasFriendlySoldier()) && !this.IsObstacleBetween(soldierGridTile, tile) && (!tile.HasDoor() || tile.HasDoor() && tile.IsDoorOpen())).ToArray();
                 break;
             case Constants.SoldierActionTargetTypes.Any:
-                validGridTiles = surroundingGridTiles.Where(tile => !this.IsObstacleBetween(soldierGridTile, tile)).ToArray();
+                validGridTiles = surroundingGridTiles.Where(tile => !this.IsObstacleBetween(soldierGridTile, tile) && (!tile.HasDoor() || tile.HasDoor() && tile.IsDoorOpen())).ToArray();
                 break;
             case Constants.SoldierActionTargetTypes.EmptyTile:
-                validGridTiles = surroundingGridTiles.Where(tile => !tile.HasSoldier()).ToArray();
+                validGridTiles = surroundingGridTiles.Where(tile => !tile.HasSoldier() && (!tile.HasDoor() || tile.HasDoor() && tile.IsDoorOpen())).ToArray();
+                break;
+            case Constants.SoldierActionTargetTypes.Door:
+                validGridTiles = surroundingGridTiles.Where(tile => !tile.HasSoldier() && tile.HasDoor()).ToArray();
                 break;
         }
 

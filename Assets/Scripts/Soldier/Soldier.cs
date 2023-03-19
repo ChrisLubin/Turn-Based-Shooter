@@ -19,6 +19,7 @@ public class Soldier : MonoBehaviour
     public Action<Vector3, int> OnShoot;
     public Action<Soldier> OnDeath;
     public Action<int> OnActionPointsChange;
+    public Action<Vector3> OnInteract;
 
     private void Awake()
     {
@@ -27,8 +28,10 @@ public class Soldier : MonoBehaviour
         this._actions = GetComponents<BaseAction>();
         SoldierShootActionController shootAction = GetComponent<SoldierShootActionController>();
         SoldierSwordActionController swordAction = GetComponent<SoldierSwordActionController>();
+        SoldierInteractActionController interactAction = GetComponent<SoldierInteractActionController>();
         shootAction.OnShoot += (Vector3 positionToShoot, int damageAmount) => this.OnShoot?.Invoke(positionToShoot, damageAmount);
         swordAction.OnHit += (Vector3 positionToShoot, int damageAmount) => this.OnShoot?.Invoke(positionToShoot, damageAmount);
+        interactAction.OnInteract += (Vector3 targetPosition) => this.OnInteract?.Invoke(targetPosition);
         this._healthController.OnDeath += this.DestroySoldier;
     }
 

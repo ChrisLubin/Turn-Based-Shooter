@@ -26,6 +26,7 @@ public static class Constants
         public const string Shoot = "SHOOT";
         public const string Grenade = "GRENADE";
         public const string Sword = "SWORD";
+        public const string Interact = "INERACT";
     }
 
     public enum SoldierActionTargetTypes
@@ -34,5 +35,6 @@ public static class Constants
         Enemy,
         EmptyTile,
         Any,
+        Door,
     }
 }
