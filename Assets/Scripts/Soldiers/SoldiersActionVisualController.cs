@@ -32,7 +32,8 @@ public class SoldiersActionVisualController : MonoBehaviour
         {
             Transform actionButtonTransform = Instantiate(_actionButtonPrefab, _actionButtonContainerTransform);
             ActionButtonController actionButtonController = actionButtonTransform.GetComponent<ActionButtonController>();
-            actionButtonController.SetActionName(actionName);
+            int actionPointsCost = soldier.GetActionCost(actionName);
+            actionButtonController.SetAction(actionName, actionPointsCost);
             actionButtonController.OnClick += this.OnActionChange;
             this._actionButtons.Add(actionButtonController);
 
