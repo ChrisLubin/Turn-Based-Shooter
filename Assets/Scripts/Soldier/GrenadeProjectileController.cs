@@ -26,7 +26,8 @@ public class GrenadeProjectileController : MonoBehaviour
         float distanceNormalized = 1 - distance / this._totalDistance;
 
         float maxHeight = this._totalDistance / 4f;
-        float positionY = this._arcYAnimationCurve.Evaluate(distanceNormalized) * maxHeight;
+        float evaluatedPosition = this._arcYAnimationCurve.Evaluate(distanceNormalized) * maxHeight;
+        float positionY = !double.IsNaN(evaluatedPosition) ? evaluatedPosition : 0.4f;
         transform.position = new Vector3(this._positionXZ.x, positionY, this._positionXZ.z);
 
         float reachedTargetDistance = .2f;
@@ -65,7 +66,8 @@ public class GrenadeProjectileController : MonoBehaviour
         float distanceNormalized = 1 - distance / this._totalDistance;
 
         float maxHeight = this._totalDistance / 4f;
-        float positionY = this._arcYAnimationCurve.Evaluate(distanceNormalized) * maxHeight;
+        float evaluatedPosition = this._arcYAnimationCurve.Evaluate(distanceNormalized) * maxHeight;
+        float positionY = !double.IsNaN(evaluatedPosition) ? evaluatedPosition : 0.4f;
 
         this._targetPosition = new Vector3(targetPosition.x, positionY, targetPosition.z);
         transform.position += Vector3.up * positionY;

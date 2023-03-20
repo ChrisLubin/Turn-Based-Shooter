@@ -69,6 +69,17 @@ public class SoldiersActionController : MonoBehaviour
 
     private void OnActionDone()
     {
+        Soldier[] friendlySoldiers = GameObject.FindObjectsOfType<Soldier>().Where(soldier => !soldier.GetIsEnemy()).ToArray();
+        if (friendlySoldiers.Count() == 0)
+        {
+            this.IsBusy = false;
+            this._visualController.SetButtonsVisual(false);
+            this._visualController.SetActionPointsVisual(false);
+            TurnController.Instance.SetShowEndTurnButton(true);
+            this.OnActionCompleted?.Invoke();
+            return;
+        }
+
         this.IsBusy = false;
         this._visualController.SetButtonsVisual(this._selectedSoldier.GetActionPoints() != 0);
         this.OnActionCompleted?.Invoke();

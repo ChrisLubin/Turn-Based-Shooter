@@ -243,6 +243,11 @@ public class LevelGrid : MonoBehaviour
         {
             return;
         }
+        if (SoldiersActionController.Instance.GetSelectedSolder() == null)
+        {
+            ClearAllActiveGridTiles();
+            return;
+        }
 
         Soldier selectedSoldier = SoldiersActionController.Instance.GetSelectedSolder();
         string selectedActionName = SoldiersActionController.Instance.GetSelectedActionName();
