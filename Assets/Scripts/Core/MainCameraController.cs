@@ -28,11 +28,11 @@ public class MainCameraController : MonoBehaviour
         this._targetPanPosition = transform.eulerAngles;
         this._targetFollowOffset = this._cinemachineTransposer.m_FollowOffset;
         this._moveSmoothingSpeed = 6f;
-        this._moveSpeed = 0.12f;
+        this._moveSpeed = 16f;
         this._panSmoothingSpeed = 5.91f;
-        this._panSpeed = 0.8f;
+        this._panSpeed = 120f;
         this._tiltSmoothingSpeed = 5f;
-        this._tiltSpeed = 1f;
+        this._tiltSpeed = 60f;
     }
 
     private void Update()
@@ -53,19 +53,19 @@ public class MainCameraController : MonoBehaviour
         transform.position = Vector3.Lerp(transform.position, this._targetMovementPosition, Time.deltaTime * this._moveSmoothingSpeed);
         if (Input.GetKey(KeyCode.W))
         {
-            inputMoveDir.z += this._moveSpeed;
+            inputMoveDir.z += this._moveSpeed * Time.deltaTime;
         }
         if (Input.GetKey(KeyCode.S))
         {
-            inputMoveDir.z -= this._moveSpeed;
+            inputMoveDir.z -= this._moveSpeed * Time.deltaTime;
         }
         if (Input.GetKey(KeyCode.A))
         {
-            inputMoveDir.x -= this._moveSpeed;
+            inputMoveDir.x -= this._moveSpeed * Time.deltaTime;
         }
         if (Input.GetKey(KeyCode.D))
         {
-            inputMoveDir.x += this._moveSpeed;
+            inputMoveDir.x += this._moveSpeed * Time.deltaTime;
         }
 
         this._targetMovementPosition += transform.forward * inputMoveDir.z + transform.right * inputMoveDir.x;
@@ -79,11 +79,11 @@ public class MainCameraController : MonoBehaviour
 
         if (Input.GetKey(KeyCode.Q))
         {
-            this._targetPanPosition.y += this._panSpeed;
+            this._targetPanPosition.y += this._panSpeed * Time.deltaTime;
         }
         else if (Input.GetKey(KeyCode.E))
         {
-            this._targetPanPosition.y -= this._panSpeed;
+            this._targetPanPosition.y -= this._panSpeed * Time.deltaTime;
         }
 
         this._targetPanPosition.y = Mathf.Clamp(this._targetPanPosition.y, -180f, 180f);
@@ -100,11 +100,11 @@ public class MainCameraController : MonoBehaviour
 
         if (Input.mouseScrollDelta.y > 0)
         {
-            this._targetFollowOffset.y += this._tiltSpeed;
+            this._targetFollowOffset.y += this._tiltSpeed * Time.deltaTime;
         }
         else
         {
-            this._targetFollowOffset.y -= this._tiltSpeed;
+            this._targetFollowOffset.y -= this._tiltSpeed * Time.deltaTime;
         }
 
         this._targetFollowOffset.y = Mathf.Clamp(this._targetFollowOffset.y, _MIN_FOLLOW_Y_OFFSET, _MAX_FOLLOW_Y_OFFSET);

@@ -1,3 +1,4 @@
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public static class Loader
@@ -19,5 +20,7 @@ public static class Loader
     public static void LoaderCallback()
     {
         SceneManager.LoadScene(Loader._targetScene.ToString());
+        QualitySettings.vSyncCount = 0;
+        Application.targetFrameRate = 100;
     }
 }
