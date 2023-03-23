@@ -20,4 +20,11 @@ public class TurnVisualController : MonoBehaviour
         this._currentTurnCountText.text = $"TURN {turnCount}";
         this._whoseTurnText.text = $"({(isPlayerTurn ? "Your" : "Enemy")} Turn)";
     }
+
+    public void SetVisual(bool showVisual)
+    {
+        this.SetShowEndTurnButton(showVisual);
+        this._currentTurnCountText.gameObject.SetActive(showVisual);
+        this._whoseTurnText.gameObject.SetActive(showVisual);
+    }
 }

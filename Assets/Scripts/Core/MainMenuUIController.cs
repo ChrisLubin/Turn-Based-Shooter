@@ -11,11 +11,13 @@ public class MainMenuUIController : MonoBehaviour
     {
         this._singleplayerButton.onClick.AddListener(() =>
         {
+            MultiplayerManager.Instance.SetIsMultiplayer(false);
             Loader.Load(Loader.Scene.GameScene);
         });
         this._multiplayerButton.onClick.AddListener(() =>
         {
-            Debug.Log($"Multiplayer");
+            MultiplayerManager.Instance.SetIsMultiplayer(true);
+            Loader.Load(Loader.Scene.GameScene);
         });
         this._quitButton.onClick.AddListener(() =>
         {

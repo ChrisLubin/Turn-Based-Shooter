@@ -18,6 +18,8 @@ public class TurnController : MonoBehaviour
             Instance = this;
             this._visualController = GetComponentInChildren<TurnVisualController>();
             this._endTurnButton = GetComponentInChildren<Button>();
+            this._currentTurn = 1;
+            this.UpdateCurrentTurn();
             return;
         }
 
@@ -27,8 +29,6 @@ public class TurnController : MonoBehaviour
 
     void Start()
     {
-        this._currentTurn = 1;
-        this.UpdateCurrentTurn();
         this._endTurnButton.onClick.AddListener(this.TriggerNextTurn);
     }
 

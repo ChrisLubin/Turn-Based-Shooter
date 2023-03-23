@@ -54,4 +54,10 @@ public class SoldiersActionVisualController : MonoBehaviour
         actionButton.SetSelectedVisual(true);
         this.OnButtonClick?.Invoke(actionName);
     }
+
+    public void SetVisual(bool showVisual)
+    {
+        this.SetButtonsVisual(showVisual);
+        this.SetActionPointsVisual(showVisual);
+    }
 }
