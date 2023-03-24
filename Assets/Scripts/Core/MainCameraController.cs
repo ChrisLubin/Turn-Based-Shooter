@@ -17,6 +17,8 @@ public class MainCameraController : NetworkBehaviour
     [SerializeField] private float _panSpeed;
     [SerializeField] private float _tiltSmoothingSpeed;
     [SerializeField] private float _tiltSpeed;
+    [SerializeField] private GameObject _lightSource;
+    [SerializeField] private Transform _orb;
 
     private void Awake()
     {
@@ -43,7 +45,9 @@ public class MainCameraController : NetworkBehaviour
         if (!this.IsOwner)
         {
             // Camera should only be active on current client
-            this._cinemachineVirtualCamera.gameObject.SetActive(false);
+            this._cinemachineVirtualCamera.enabled = false;
+            this._lightSource.SetActive(true);
+            this._orb.GetComponent<MeshRenderer>().enabled = true;
         }
     }
 

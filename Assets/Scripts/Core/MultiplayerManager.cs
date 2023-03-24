@@ -35,7 +35,6 @@ public class MultiplayerManager : MonoBehaviour
         if (newState == MultiplayerState.InGame)
         {
             // Loading into game
-            Debug.Log($"Is host: {NetworkManager.Singleton.IsHost}");
             if (!NetworkManager.Singleton.IsHost) { return; }
 
             // Host instantiates player objects
