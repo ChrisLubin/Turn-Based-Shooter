@@ -12,11 +12,12 @@ public class GameSceneVisualController : MonoBehaviour
         bool isMultiplayer = MultiplayerManager.Instance.IsMultiplayer;
         this._turnVisualController.SetVisual(!isMultiplayer);
         this._soldiersActionVisualController.SetVisual(!isMultiplayer);
-        this._multiplayerOverlayVisualController.SetVisual(isMultiplayer);
 
         if (!isMultiplayer)
         {
             this._singlePlayerPlayerObject.SetActive(true);
+            this._multiplayerOverlayVisualController.SetVisual(false);
         }
+        MultiplayerManager.Instance.OnGameSceneLoad();
     }
 }

@@ -1461,6 +1461,7 @@ GameObject:
   m_Component:
   - component: {fileID: 312218100}
   - component: {fileID: 312218099}
+  - component: {fileID: 312218101}
   m_Layer: 0
   m_Name: MultiplayerManager
   m_TagString: Untagged
@@ -1483,6 +1484,8 @@ MonoBehaviour:
   _playerOrbPrefab: {fileID: 1447840805230351767, guid: 877e90ec1c9208c4c8b156f2723aa9b5,
     type: 3}
   <IsMultiplayer>k__BackingField: 0
+  <IsLocalMultiplayer>k__BackingField: 0
+  _visual: {fileID: 0}
 --- !u!4 &312218100
 Transform:
   m_ObjectHideFlags: 0
@@ -1498,6 +1501,22 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &312218101
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 312218098}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 2194922313
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!1 &329196744
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
@@ -10,6 +11,8 @@ public class MultiplayerOverlayVisualController : NetworkBehaviour
     [SerializeField] private TMP_InputField _joinRoomInput;
     [SerializeField] private Button _joinRoomButton;
     [SerializeField] private TMP_Text _statusText;
+    public Action OnCreateRoomButtonClick;
+    public Action OnJoinRoomButtonClick;
 
     private void Awake()
     {
@@ -18,29 +21,19 @@ public class MultiplayerOverlayVisualController : NetworkBehaviour
 
     private void Start()
     {
-        NetworkManager.Singleton.OnClientConnectedCallback += this.OnClientConnected;
         this._createRoomButton.onClick.AddListener(() =>
         {
-            NetworkManager.Singleton.StartHost();
-            this.SetInteractableVisual(false);
-            this.SetStatusTextVisual(true);
-            MultiplayerManager.Instance.SetState(MultiplayerManager.MultiplayerState.HostWaitingForPlayer);
+            this.OnCreateRoomButtonClick?.Invoke();
         });
         this._joinRoomButton.onClick.AddListener(() =>
         {
-            NetworkManager.Singleton.StartClient();
+            this.OnJoinRoomButtonClick?.Invoke();
         });
     }
 
-    public override void OnDestroy()
-    {
-        base.OnDestroy();
-        NetworkManager.Singleton.OnClientConnectedCallback -= this.OnClientConnected;
-    }
-
     private void SetPanelVisual(bool showVisual) => this._panel.gameObject.SetActive(showVisual);
-    private void SetStatusTextVisual(bool showText) => this._statusText.gameObject.SetActive(showText);
-    private void SetStatusText(string text) => this._statusText.text = text;
+    public void SetStatusTextVisual(bool showText) => this._statusText.gameObject.SetActive(showText);
+    public void SetGameCode(string code) => this._statusText.text = $"Your Code Is: {code}\n\nWaiting For A Player To Join...";
 
     public void SetVisual(bool showVisual)
     {
@@ -52,30 +45,10 @@ public class MultiplayerOverlayVisualController : NetworkBehaviour
         }
     }
 
-    private void SetInteractableVisual(bool showVisual)
+    public void SetInteractableVisual(bool showVisual)
     {
         this._createRoomButton.gameObject.SetActive(showVisual);
         this._joinRoomInput.gameObject.SetActive(showVisual);
         this._joinRoomButton.gameObject.SetActive(showVisual);
-    }
-
-    private void OnClientConnected(ulong clientId)
-    {
-        if (this.IsHost && this.OwnerClientId == clientId)
-        {
-            // Ignore when host first connects
-            return;
-        }
-
-        this.SetVisual(false);
-        MultiplayerManager.Instance.SetState(MultiplayerManager.MultiplayerState.InGame);
-        if (this.IsHost)
-        {
-            Debug.Log($"Client ID {clientId} connected to you.");
-        }
-        else
-        {
-            Debug.Log($"You joined with a client ID of {clientId}.");
-        }
     }
 }
