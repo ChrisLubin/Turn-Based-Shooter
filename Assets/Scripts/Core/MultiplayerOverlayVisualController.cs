@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class MultiplayerOverlayVisualController : NetworkBehaviour
 {
-    private Image _panel;
+    [SerializeField] private Image _panel;
     [SerializeField] private Button _createRoomButton;
     [SerializeField] private TMP_InputField _joinRoomInput;
     [SerializeField] private Button _joinRoomButton;
@@ -13,7 +13,6 @@ public class MultiplayerOverlayVisualController : NetworkBehaviour
 
     private void Awake()
     {
-        this._panel = GetComponentInChildren<Image>();
         this.SetVisual(false);
     }
 

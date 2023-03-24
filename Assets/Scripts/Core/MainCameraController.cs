@@ -1,8 +1,10 @@
 using Cinemachine;
+using Unity.Netcode;
 using UnityEngine;
 
-public class MainCameraController : MonoBehaviour
+public class MainCameraController : NetworkBehaviour
 {
+    private CinemachineVirtualCamera _cinemachineVirtualCamera;
     private CinemachineTransposer _cinemachineTransposer;
     private Vector3 _targetFollowOffset;
     private Vector3 _targetMovementPosition;
@@ -18,8 +20,8 @@ public class MainCameraController : MonoBehaviour
 
     private void Awake()
     {
-        CinemachineVirtualCamera cinemachineVirtualCamera = GetComponentInChildren<CinemachineVirtualCamera>();
-        this._cinemachineTransposer = cinemachineVirtualCamera.GetCinemachineComponent<CinemachineTransposer>();
+        this._cinemachineVirtualCamera = GetComponentInChildren<CinemachineVirtualCamera>();
+        this._cinemachineTransposer = this._cinemachineVirtualCamera.GetCinemachineComponent<CinemachineTransposer>();
     }
 
     private void Start()
@@ -33,6 +35,16 @@ public class MainCameraController : MonoBehaviour
         this._panSpeed = 120f;
         this._tiltSmoothingSpeed = 5f;
         this._tiltSpeed = 60f;
+    }
+
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+        if (!this.IsOwner)
+        {
+            // Camera should only be active on current client
+            this._cinemachineVirtualCamera.gameObject.SetActive(false);
+        }
     }
 
     private void Update()

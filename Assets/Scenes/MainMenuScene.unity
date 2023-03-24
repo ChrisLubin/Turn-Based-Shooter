@@ -1480,6 +1480,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b27e00ea89755f843aa13058ce5a68bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _playerOrbPrefab: {fileID: 1447840805230351767, guid: 877e90ec1c9208c4c8b156f2723aa9b5,
+    type: 3}
+  <IsMultiplayer>k__BackingField: 0
 --- !u!4 &312218100
 Transform:
   m_ObjectHideFlags: 0
