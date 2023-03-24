@@ -3,7 +3,7 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MultiplayerOverlayVisualController : MonoBehaviour
+public class MultiplayerOverlayVisualController : NetworkBehaviour
 {
     private Image _panel;
     [SerializeField] private Button _createRoomButton;
@@ -19,6 +19,7 @@ public class MultiplayerOverlayVisualController : MonoBehaviour
 
     private void Start()
     {
+        NetworkManager.Singleton.OnClientConnectedCallback += this.OnClientConnected;
         this._createRoomButton.onClick.AddListener(() =>
         {
             NetworkManager.Singleton.StartHost();
@@ -30,6 +31,12 @@ public class MultiplayerOverlayVisualController : MonoBehaviour
         {
             NetworkManager.Singleton.StartClient();
         });
+    }
+
+    public override void OnDestroy()
+    {
+        base.OnDestroy();
+        NetworkManager.Singleton.OnClientConnectedCallback -= this.OnClientConnected;
     }
 
     private void SetPanelVisual(bool showVisual) => this._panel.gameObject.SetActive(showVisual);
@@ -51,5 +58,25 @@ public class MultiplayerOverlayVisualController : MonoBehaviour
         this._createRoomButton.gameObject.SetActive(showVisual);
         this._joinRoomInput.gameObject.SetActive(showVisual);
         this._joinRoomButton.gameObject.SetActive(showVisual);
+    }
+
+    private void OnClientConnected(ulong clientId)
+    {
+        if (this.IsHost && this.OwnerClientId == clientId)
+        {
+            // Ignore when host first connects
+            return;
+        }
+
+        this.SetVisual(false);
+        MultiplayerManager.Instance.SetState(MultiplayerManager.MultiplayerState.InGame);
+        if (this.IsHost)
+        {
+            Debug.Log($"Client ID {clientId} connected to you.");
+        }
+        else
+        {
+            Debug.Log($"You joined with a client ID of {clientId}.");
+        }
     }
 }

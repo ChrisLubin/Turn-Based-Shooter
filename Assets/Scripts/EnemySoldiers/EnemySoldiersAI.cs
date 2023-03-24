@@ -8,6 +8,11 @@ public class EnemySoldiersAI : MonoBehaviour
 {
     private void Start()
     {
+        if (MultiplayerManager.Instance.IsMultiplayer)
+        {
+            return;
+        }
+
         TurnController.Instance.OnTurnEnd += this.OnTurnEnd;
     }
 
