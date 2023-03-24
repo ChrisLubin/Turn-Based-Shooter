@@ -37,7 +37,7 @@ public class MainCameraController : MonoBehaviour
 
     private void Update()
     {
-        if (ActionCameraController.Instance.IsActive() || (MultiplayerManager.Instance.IsMultiplayer && MultiplayerManager.Instance.State == MultiplayerManager.MultiplayerState.Lobby))
+        if (ActionCameraController.Instance.IsActive() || (MultiplayerManager.Instance.IsMultiplayer && MultiplayerManager.Instance.State != MultiplayerManager.MultiplayerState.InGame))
         {
             return;
         }
