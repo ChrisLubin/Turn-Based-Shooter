@@ -4,7 +4,7 @@ public class GameSceneVisualController : MonoBehaviour
 {
     [SerializeField] private TurnVisualController _turnVisualController;
     [SerializeField] private SoldiersActionVisualController _soldiersActionVisualController;
-    [SerializeField] private MultiplayerOverlayVisualController _multiplayerOverlayVisualController;
+    [SerializeField] private MultiplayerVisualController _multiplayerVisualController;
     [SerializeField] private GameObject _singlePlayerPlayerObject;
 
     private void Start()
@@ -16,7 +16,7 @@ public class GameSceneVisualController : MonoBehaviour
         if (!isMultiplayer)
         {
             this._singlePlayerPlayerObject.SetActive(true);
-            this._multiplayerOverlayVisualController.SetVisual(false);
+            this._multiplayerVisualController.SetVisual(false);
         }
         MultiplayerManager.Instance.OnGameSceneLoad();
     }

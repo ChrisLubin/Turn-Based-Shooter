@@ -1485,7 +1485,6 @@ MonoBehaviour:
     type: 3}
   <IsMultiplayer>k__BackingField: 0
   <IsLocalMultiplayer>k__BackingField: 0
-  _visual: {fileID: 0}
 --- !u!4 &312218100
 Transform:
   m_ObjectHideFlags: 0

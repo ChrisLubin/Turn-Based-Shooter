@@ -4,7 +4,7 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MultiplayerOverlayVisualController : NetworkBehaviour
+public class MultiplayerVisualController : NetworkBehaviour
 {
     [SerializeField] private Image _panel;
     [SerializeField] private Button _createRoomButton;
@@ -33,7 +33,9 @@ public class MultiplayerOverlayVisualController : NetworkBehaviour
 
     private void SetPanelVisual(bool showVisual) => this._panel.gameObject.SetActive(showVisual);
     public void SetStatusTextVisual(bool showText) => this._statusText.gameObject.SetActive(showText);
-    public void SetGameCode(string code) => this._statusText.text = $"Your Code Is: {code}\n\nWaiting For A Player To Join...";
+    public void SetStatusGameCode(string code) => this._statusText.text = $"Your Code Is: {code}\n\nWaiting For A Player To Join...";
+    public void SetStatusText(string text) => this._statusText.text = text;
+    public string GetInputText() => this._joinRoomInput.text;
 
     public void SetVisual(bool showVisual)
     {

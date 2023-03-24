@@ -7529,7 +7529,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _turnVisualController: {fileID: 705104481}
   _soldiersActionVisualController: {fileID: 477936127}
-  _multiplayerOverlayVisualController: {fileID: 1885421541}
+  _multiplayerVisualController: {fileID: 1885421541}
   _singlePlayerPlayerObject: {fileID: 1447840806294533919}
 --- !u!4 &1178082730
 Transform:
@@ -11509,7 +11509,6 @@ MonoBehaviour:
     type: 3}
   <IsMultiplayer>k__BackingField: 1
   <IsLocalMultiplayer>k__BackingField: 1
-  _visual: {fileID: 1885421541}
 --- !u!4 &1970407591
 Transform:
   m_ObjectHideFlags: 0

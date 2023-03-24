@@ -1,4 +1,6 @@
 using Unity.Netcode;
+using Unity.Netcode.Transports.UTP;
+using Unity.Networking.Transport.Relay;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using Unity.Services.Relay;
@@ -17,10 +19,11 @@ public class MultiplayerManager : NetworkBehaviour
         LobbyRelayConnected,
         LobbyLocal,
         HostWaitingForPlayer,
+        PlayerJoiningGame,
         InGame,
     }
     public MultiplayerState State { get; private set; }
-    private MultiplayerOverlayVisualController _visual;
+    private MultiplayerVisualController _visual;
 
     private void Awake()
     {
@@ -57,7 +60,7 @@ public class MultiplayerManager : NetworkBehaviour
         }
 
         NetworkManager.Singleton.OnClientConnectedCallback += this.OnClientConnected;
-        this._visual = GameObject.FindObjectOfType<MultiplayerOverlayVisualController>();
+        this._visual = GameObject.FindObjectOfType<MultiplayerVisualController>();
         this._visual.SetVisual(true);
         this._visual.SetInteractableVisual(false);
         this._visual.OnCreateRoomButtonClick += this.OnCreateRoomButtonClick;
@@ -79,6 +82,9 @@ public class MultiplayerManager : NetworkBehaviour
 
     private async void OnStateChange(MultiplayerState newState)
     {
+        string gameCode;
+        RelayServerData relayServerData;
+
         switch (newState)
         {
             case MultiplayerState.LobbyLocal:
@@ -92,25 +98,42 @@ public class MultiplayerManager : NetworkBehaviour
             case MultiplayerState.HostWaitingForPlayer:
                 if (this.IsLocalMultiplayer)
                 {
-                    this._visual.SetGameCode("(Not Needed)");
+                    this._visual.SetStatusGameCode("(Not Needed)");
+                    NetworkManager.Singleton.StartHost();
+                    return;
                 }
-                else
+
+                AuthenticationService.Instance.SignedIn -= this.OnRelaySignIn;
+                this._visual.SetStatusGameCode("Loading...");
+                try
                 {
-                    AuthenticationService.Instance.SignedIn -= this.OnRelaySignIn;
-                    this._visual.SetGameCode("Loading...");
-                    try
-                    {
-                        int maxPlayersCount = 2;
-                        Allocation allocation = await RelayService.Instance.CreateAllocationAsync(maxPlayersCount);
-                        string gameCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
-                        this._visual.SetGameCode(gameCode);
-                    }
-                    catch (RelayServiceException e)
-                    {
-                        this._visual.SetGameCode("Something went wrong...");
-                        Debug.LogError(e);
-                    }
+                    int maxPlayersCount = 2;
+                    Allocation createAllocation = await RelayService.Instance.CreateAllocationAsync(maxPlayersCount);
+                    gameCode = await RelayService.Instance.GetJoinCodeAsync(createAllocation.AllocationId);
+                    this._visual.SetStatusGameCode(gameCode);
+
+                    relayServerData = new(createAllocation, "dtls");
+                    NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(relayServerData);
+                    NetworkManager.Singleton.StartHost();
                 }
+                catch (RelayServiceException e)
+                {
+                    this._visual.SetStatusGameCode("Something went wrong...");
+                    Debug.LogError(e);
+                }
+                break;
+            case MultiplayerState.PlayerJoiningGame:
+                if (this.IsLocalMultiplayer)
+                {
+                    NetworkManager.Singleton.StartClient();
+                    return;
+                }
+
+                gameCode = this._visual.GetInputText().ToUpper();
+                JoinAllocation joinAllocation = await RelayService.Instance.JoinAllocationAsync(gameCode);
+                relayServerData = new(joinAllocation, "dtls");
+                NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(relayServerData);
+                NetworkManager.Singleton.StartClient();
                 break;
             case MultiplayerState.InGame:
                 // Loading into game
@@ -156,7 +179,6 @@ public class MultiplayerManager : NetworkBehaviour
 
     private void OnCreateRoomButtonClick()
     {
-        NetworkManager.Singleton.StartHost();
         this._visual.SetInteractableVisual(false);
         this._visual.SetStatusTextVisual(true);
         MultiplayerManager.Instance.SetState(MultiplayerManager.MultiplayerState.HostWaitingForPlayer);
@@ -164,13 +186,9 @@ public class MultiplayerManager : NetworkBehaviour
 
     private void OnJoinRoomButtonClick()
     {
-        if (MultiplayerManager.Instance.IsLocalMultiplayer)
-        {
-            NetworkManager.Singleton.StartClient();
-        }
-        else
-        {
-
-        }
+        this._visual.SetInteractableVisual(false);
+        this._visual.SetStatusTextVisual(true);
+        this._visual.SetStatusText("Joining Game...");
+        MultiplayerManager.Instance.SetState(MultiplayerManager.MultiplayerState.PlayerJoiningGame);
     }
 }
