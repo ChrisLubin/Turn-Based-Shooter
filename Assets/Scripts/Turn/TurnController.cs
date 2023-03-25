@@ -3,7 +3,7 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class TurnController : MonoBehaviour
+public class TurnController : NetworkBehaviour
 {
     public static TurnController Instance { get; private set; }
     private int _currentTurn;
@@ -28,7 +28,7 @@ public class TurnController : MonoBehaviour
 
     void Start()
     {
-        this._endTurnButton.onClick.AddListener(this.TriggerNextTurn);
+        this._endTurnButton.onClick.AddListener(this.TriggerNextTurnServerRpc);
     }
 
     public void OnGameStart()
@@ -47,7 +47,11 @@ public class TurnController : MonoBehaviour
         this._visualController.SetShowEndTurnButton(this._isPlayerTurn);
     }
 
-    public void TriggerNextTurn()
+    [ServerRpc(RequireOwnership = false)]
+    public void TriggerNextTurnServerRpc() => this.TriggerNextTurnClientRpc();
+
+    [ClientRpc]
+    public void TriggerNextTurnClientRpc()
     {
         this._currentTurn++;
         this._isPlayerTurn = !this._isPlayerTurn;

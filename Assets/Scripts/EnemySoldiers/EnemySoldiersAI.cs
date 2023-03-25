@@ -70,6 +70,6 @@ public class EnemySoldiersAI : MonoBehaviour
             }
         }
 
-        TurnController.Instance.TriggerNextTurn();
+        TurnController.Instance.TriggerNextTurnServerRpc();
     }
 }
