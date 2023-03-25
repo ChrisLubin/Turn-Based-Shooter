@@ -1,4 +1,5 @@
 using System;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -18,8 +19,6 @@ public class TurnController : MonoBehaviour
             Instance = this;
             this._visualController = GetComponentInChildren<TurnVisualController>();
             this._endTurnButton = GetComponentInChildren<Button>();
-            this._currentTurn = 1;
-            this.UpdateCurrentTurn();
             return;
         }
 
@@ -30,6 +29,13 @@ public class TurnController : MonoBehaviour
     void Start()
     {
         this._endTurnButton.onClick.AddListener(this.TriggerNextTurn);
+    }
+
+    public void OnGameStart()
+    {
+        this._isPlayerTurn = NetworkManager.Singleton.IsHost;
+        this._currentTurn = 1;
+        this.UpdateCurrentTurn();
     }
 
     public void SetShowEndTurnButton(bool showButton) => this._visualController.SetShowEndTurnButton(showButton);

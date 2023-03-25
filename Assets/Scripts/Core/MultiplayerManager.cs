@@ -1,3 +1,4 @@
+using System;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using Unity.Networking.Transport.Relay;
@@ -24,11 +25,13 @@ public class MultiplayerManager : NetworkBehaviour
     }
     public MultiplayerState State { get; private set; }
     private MultiplayerVisualController _visual;
+    public Action OnStartGameRequest;
 
     private void Awake()
     {
         if (Instance != null)
         {
+            Debug.Log("There's more than one MultiplayerManager! " + transform + " - " + Instance);
             Destroy(gameObject);
             return;
         }
@@ -56,6 +59,8 @@ public class MultiplayerManager : NetworkBehaviour
     {
         if (!this.IsMultiplayer)
         {
+            NetworkManager.Singleton.StartHost();
+            this.OnStartGameRequest?.Invoke();
             return;
         }
 
@@ -153,6 +158,8 @@ public class MultiplayerManager : NetworkBehaviour
 
                     playerOrb.GetComponent<NetworkObject>().SpawnWithOwnership(clientId);
                 }
+
+                this.OnStartGameRequest?.Invoke();
                 break;
         }
     }

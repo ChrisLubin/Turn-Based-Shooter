@@ -1,3 +1,4 @@
+using Unity.Netcode;
 using UnityEngine;
 
 public class GameSceneVisualController : MonoBehaviour
@@ -9,15 +10,31 @@ public class GameSceneVisualController : MonoBehaviour
 
     private void Start()
     {
-        bool isMultiplayer = MultiplayerManager.Instance.IsMultiplayer;
-        this._turnVisualController.SetVisual(!isMultiplayer);
-        this._soldiersActionVisualController.SetVisual(!isMultiplayer);
+        if (!MultiplayerManager.Instance.IsMultiplayer)
+        {
+            return;
+        }
 
-        if (!isMultiplayer)
+        this._turnVisualController.SetVisual(false);
+        this._soldiersActionVisualController.SetVisual(false);
+        this._multiplayerVisualController.SetVisual(true);
+    }
+
+    public void OnGameStart()
+    {
+        this._turnVisualController.SetVisual(true);
+
+        if (!MultiplayerManager.Instance.IsMultiplayer)
         {
             this._singlePlayerPlayerObject.SetActive(true);
+            this._soldiersActionVisualController.SetVisual(true);
             this._multiplayerVisualController.SetVisual(false);
         }
-        MultiplayerManager.Instance.OnGameSceneLoad();
+        else
+        {
+            // Host goes first
+            bool isHost = NetworkManager.Singleton.IsHost;
+            this._soldiersActionVisualController.SetVisual(isHost);
+        }
     }
 }
