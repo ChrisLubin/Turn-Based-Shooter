@@ -10,7 +10,7 @@ public class LevelGrid : NetworkBehaviour
     [SerializeField] private Transform _gridTilePrefab;
     private GridController<GridTile> _gridController;
     public static LevelGrid Instance { get; private set; }
-    private List<Soldier> _soldiers;
+    private List<Soldier> _soldiers = new();
     private List<Door> _doors;
     private IDictionary<Soldier, GridTile> _soldierToGridTileMap = new Dictionary<Soldier, GridTile>();
     private List<GridTile> _gridTilesWithActiveVisual = new();
@@ -35,6 +35,10 @@ public class LevelGrid : NetworkBehaviour
         SoldiersActionController.Instance.OnActionCompleted += this.UpdateActiveGridTiles;
         SoldiersActionController.Instance.OnSelectedSoldierHasNoActionPoints += this.ClearAllActiveGridTiles;
         TurnController.Instance.OnTurnEnd += this.OnTurnEnd;
+    }
+
+    public void OnGameStart()
+    {
         this._gridController.CreateGridTiles(this.transform, _gridTilePrefab);
         this._soldiers = GameObject.FindObjectsOfType<Soldier>().ToList();
         foreach (Soldier soldier in this._soldiers)

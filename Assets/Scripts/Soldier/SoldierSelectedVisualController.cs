@@ -7,10 +7,6 @@ public class SoldierSelectedVisualController : MonoBehaviour
     private void Awake()
     {
         this._selectedVisual = GetComponentInChildren<CircleAnimation>();
-    }
-
-    private void Start()
-    {
         this.SetShowVisual(false);
     }
 

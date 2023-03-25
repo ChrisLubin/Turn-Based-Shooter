@@ -31,9 +31,18 @@ public class SoldiersActionController : MonoBehaviour
     {
         GlobalMouse.Instance.OnLayerLeftClick += this.OnLayerLeftClick;
         TurnController.Instance.OnTurnEnd += this.OnTurnEnd;
-        this._selectedSoldier.SetVisual(true);
         this._visualController.OnButtonClick += this.OnActionChange;
+    }
+
+    public void OnGameStart()
+    {
+        Soldier[] friendlySoldiers = FindObjectsOfType<Soldier>().Where(soldier => !soldier.GetIsEnemy()).ToArray();
+        this._selectedSoldier = friendlySoldiers[0];
+        bool isPlayerTurn = TurnController.Instance.GetIsPlayerTurn();
+
+        this._selectedSoldier.SetVisual(isPlayerTurn);
         this._visualController.UpdateSoldierActionButtons(this._selectedSoldier, out string firstActionName);
+        this._visualController.SetButtonsVisual(isPlayerTurn);
         this._selectedActionName = firstActionName;
         this._visualController.UpdateActionPoints(this._selectedSoldier.GetActionPoints());
     }
