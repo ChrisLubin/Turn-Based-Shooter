@@ -81,20 +81,21 @@ public class SoldiersActionController : MonoBehaviour
         }
 
         this.IsBusy = false;
-        this._visualController.SetButtonsVisual(this._selectedSoldier.GetActionPoints() != 0);
+        bool isPlayerTurn = TurnController.Instance.GetIsPlayerTurn();
+        this._visualController.SetButtonsVisual(isPlayerTurn && this._selectedSoldier.GetActionPoints() != 0);
         this.OnActionCompleted?.Invoke();
-        TurnController.Instance.SetShowEndTurnButton(true);
+        TurnController.Instance.SetShowEndTurnButton(isPlayerTurn);
     }
 
-    public void DoAction(Vector3 to)
+    public void DoAction(Soldier soldier, string actionName, Vector3 to)
     {
         if (this.IsBusy)
         {
             return;
         }
 
-        int actionCost = this._selectedSoldier.GetActionCost(this._selectedActionName);
-        int soldierActionPoints = this._selectedSoldier.GetActionPoints();
+        int actionCost = soldier.GetActionCost(actionName);
+        int soldierActionPoints = soldier.GetActionPoints();
 
         if (actionCost > soldierActionPoints)
         {
@@ -102,10 +103,15 @@ public class SoldiersActionController : MonoBehaviour
         }
 
         this.IsBusy = true;
-        this._selectedSoldier.DoAction(this.OnActionDone, to, this._selectedActionName);
-        this._visualController.UpdateActionPoints(this._selectedSoldier.GetActionPoints());
-        this._visualController.SetButtonsVisual(false);
-        TurnController.Instance.SetShowEndTurnButton(false);
+        soldier.DoAction(this.OnActionDone, to, actionName);
+
+        if (TurnController.Instance.GetIsPlayerTurn())
+        {
+            this._visualController.UpdateActionPoints(soldier.GetActionPoints());
+            this._visualController.SetButtonsVisual(false);
+            TurnController.Instance.SetShowEndTurnButton(false);
+        }
+
         if (this._selectedSoldier.GetActionPoints() == 0)
         {
             this.OnSelectedSoldierHasNoActionPoints?.Invoke();

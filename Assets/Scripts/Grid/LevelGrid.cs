@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class LevelGrid : MonoBehaviour
+public class LevelGrid : NetworkBehaviour
 {
     [SerializeField] private Transform _gridTilePrefab;
     private GridController<GridTile> _gridController;
@@ -117,6 +118,7 @@ public class LevelGrid : MonoBehaviour
         Vector3 selectedSoldierPosition = SoldiersActionController.Instance.GetSelectedSolder().transform.position;
         GridPosition from = this._gridController.GetGridPosition(selectedSoldierPosition);
         GridPosition to = new();
+        Soldier soldier = null;
 
         if (layerMaskId == (int)Constants.LayerMaskIds.MainFloor)
         {
@@ -124,12 +126,13 @@ public class LevelGrid : MonoBehaviour
         }
         else if (layerMaskId == (int)Constants.LayerMaskIds.Soldier)
         {
-            bool gotSoldier = gameObject.TryGetComponent<Soldier>(out Soldier soldier);
+            bool gotSoldier = gameObject.TryGetComponent<Soldier>(out Soldier tempSoldier);
             if (!gotSoldier)
             {
                 return;
             }
 
+            soldier = tempSoldier;
             to = this._gridController.GetGridPosition(soldier.transform.position);
         }
 
@@ -138,8 +141,25 @@ public class LevelGrid : MonoBehaviour
             return;
         }
 
-        Vector3 middleOfGridPosition = this._gridController.GetWorldPosition(to);
-        SoldiersActionController.Instance.DoAction(middleOfGridPosition);
+        Vector3 middleOfGridTargetPosition = this._gridController.GetWorldPosition(to);
+        this.DoActionServerRpc(selectedSoldierPosition, SoldiersActionController.Instance.GetSelectedActionName(), middleOfGridTargetPosition);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void DoActionServerRpc(Vector3 fromPosition, string actionName, Vector3 targetPosition) => this.DoActionClientRpc(fromPosition, actionName, targetPosition);
+
+    [ClientRpc]
+    private void DoActionClientRpc(Vector3 fromPosition, string actionName, Vector3 targetPosition)
+    {
+        Soldier soldier = this._gridController.GetGridTile(fromPosition).GetSoldier();
+
+        if (soldier == null)
+        {
+            Debug.LogError("A soldier was not found in grid tile!");
+            return;
+        }
+
+        SoldiersActionController.Instance.DoAction(soldier, actionName, targetPosition);
     }
 
     private void SetSoldierAtGridTile(GridTile gridTile, Soldier soldier)
