@@ -13,7 +13,6 @@ public class SoldierGrenadeActionController : BaseAction
         Cooloff,
     }
     private State _state;
-    public Action<Vector3, int> OnGrenadeHit;
     [SerializeField] private Transform _grenadePrefab;
     [SerializeField] private Transform _throwPoint;
 
@@ -43,7 +42,6 @@ public class SoldierGrenadeActionController : BaseAction
 
     private void InvokeGrenadeAction()
     {
-        this.OnGrenadeHit?.Invoke(this._targetPosition, 30);
         ScreenShakeController.Instance.Shake(2);
     }
 
