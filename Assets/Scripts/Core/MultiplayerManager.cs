@@ -134,7 +134,7 @@ public class MultiplayerManager : NetworkBehaviour
                     return;
                 }
 
-                gameCode = this._visual.GetInputText().ToUpper();
+                gameCode = this._visual.GetInputText().ToUpper().Substring(0, 6);
                 JoinAllocation joinAllocation = await RelayService.Instance.JoinAllocationAsync(gameCode);
                 relayServerData = new(joinAllocation, "dtls");
                 NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(relayServerData);
