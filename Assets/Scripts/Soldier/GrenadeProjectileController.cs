@@ -40,7 +40,7 @@ public class GrenadeProjectileController : MonoBehaviour
             {
                 if (collider.TryGetComponent<Soldier>(out Soldier soldier))
                 {
-                    soldier.TakeDamage(8);
+                    soldier.TakeDamage(15);
                 }
                 else if (collider.TryGetComponent<Crate>(out Crate crate))
                 {
